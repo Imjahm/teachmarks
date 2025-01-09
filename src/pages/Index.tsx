@@ -1,66 +1,78 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { CheckCircle } from "lucide-react";
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useNavigate } from "react-router-dom";
+import { FileText, Upload, Users, BookOpen } from "lucide-react";
 
 const Index = () => {
+  const session = useSession();
+  const supabase = useSupabaseClient();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/auth");
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50">
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Streamline Your Marking Process
-          </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            The intelligent platform that helps teachers mark assignments faster and provide better feedback
-          </p>
-          <Button size="lg" className="bg-primary text-white">
-            Get Started
-          </Button>
-        </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Welcome, {session?.user?.email}</h1>
+        <Button variant="outline" onClick={handleSignOut}>Sign Out</Button>
+      </div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          <Card className="p-6">
-            <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-primary mr-2" />
-              <h3 className="text-xl font-semibold">Fast & Accurate</h3>
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card className="p-6 hover:shadow-lg transition-shadow">
+          <div className="flex items-center space-x-4">
+            <Upload className="w-8 h-8 text-primary" />
+            <div>
+              <h3 className="font-semibold">Upload Work</h3>
+              <p className="text-sm text-gray-600">Add new student work</p>
             </div>
-            <p className="text-gray-600">
-              Our AI-powered system helps you mark assignments quickly without compromising accuracy
-            </p>
-          </Card>
+          </div>
+        </Card>
 
-          <Card className="p-6">
-            <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-primary mr-2" />
-              <h3 className="text-xl font-semibold">Detailed Analytics</h3>
+        <Card className="p-6 hover:shadow-lg transition-shadow">
+          <div className="flex items-center space-x-4">
+            <FileText className="w-8 h-8 text-primary" />
+            <div>
+              <h3 className="font-semibold">Mark Work</h3>
+              <p className="text-sm text-gray-600">Grade pending submissions</p>
             </div>
-            <p className="text-gray-600">
-              Get insights into student performance and identify areas for improvement
-            </p>
-          </Card>
+          </div>
+        </Card>
 
-          <Card className="p-6">
-            <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-primary mr-2" />
-              <h3 className="text-xl font-semibold">Time-Saving</h3>
+        <Card className="p-6 hover:shadow-lg transition-shadow">
+          <div className="flex items-center space-x-4">
+            <Users className="w-8 h-8 text-primary" />
+            <div>
+              <h3 className="font-semibold">Classes</h3>
+              <p className="text-sm text-gray-600">Manage your classes</p>
             </div>
-            <p className="text-gray-600">
-              Reduce marking time by up to 50% while providing more detailed feedback
-            </p>
-          </Card>
-        </div>
+          </div>
+        </Card>
 
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Ready to Transform Your Marking Process?
-          </h2>
-          <p className="text-gray-600 mb-8">
-            Join thousands of teachers who are already saving time with our platform
-          </p>
-          <Button variant="outline" size="lg">
-            Learn More
-          </Button>
-        </div>
+        <Card className="p-6 hover:shadow-lg transition-shadow">
+          <div className="flex items-center space-x-4">
+            <BookOpen className="w-8 h-8 text-primary" />
+            <div>
+              <h3 className="font-semibold">Rubrics</h3>
+              <p className="text-sm text-gray-600">Create marking schemes</p>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold mb-4">Recent Submissions</h2>
+          <p className="text-gray-600">No recent submissions</p>
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold mb-4">Marking Progress</h2>
+          <p className="text-gray-600">No work to mark</p>
+        </Card>
       </div>
     </div>
   );
