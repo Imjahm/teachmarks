@@ -22,9 +22,24 @@ const Auth = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="max-w-md w-full space-y-8 p-10 bg-white rounded-xl shadow-lg">
-        <div className="text-center">
-          <h1 className="font-poppins font-semibold text-4xl text-gray-900 mb-2">TeachMarks</h1>
-          <p className="font-roboto text-gray-600 text-lg">Sign in to start marking</p>
+        <div className="text-center space-y-6">
+          <div className="flex justify-center">
+            <div className="relative w-24 h-24">
+              {/* Abstract butterfly logo representation */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-20 h-20 relative">
+                  <div className="absolute inset-0 transform rotate-45">
+                    <div className="w-10 h-10 bg-primary rounded-tl-full rounded-br-full absolute top-0 left-0 opacity-80"></div>
+                    <div className="w-10 h-10 bg-[#10b981] rounded-tl-full rounded-br-full absolute bottom-0 right-0 opacity-80"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h1 className="font-poppins font-semibold text-4xl text-gray-900">EduEumaeus</h1>
+            <p className="font-roboto text-[#10b981] text-lg mt-2">Guiding Every Educational Journey</p>
+          </div>
         </div>
         
         {errorMessage && (

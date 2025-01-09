@@ -33,8 +33,8 @@ export default {
           foreground: "#ffffff",
         },
         secondary: {
-          DEFAULT: "#93c5fd",
-          foreground: "#1f2937",
+          DEFAULT: "#10b981",
+          foreground: "#ffffff",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
