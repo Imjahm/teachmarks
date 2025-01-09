@@ -3,9 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { createBrowserSupabaseClient } from "@supabase/auth-helpers-shared";
+import { useState, useEffect } from "react";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
-import { useState } from "react";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -41,7 +40,7 @@ const App = () => {
 };
 
 const RequireAuth = ({ children }: { children: React.ReactNode }) => {
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
