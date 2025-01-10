@@ -8,6 +8,7 @@ import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import { RubricUpload } from "./components/RubricUpload";
 import { supabase } from "./integrations/supabase/client";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,13 @@ const App = () => {
                 <RequireAuth>
                   <Layout>
                     <Index />
+                  </Layout>
+                </RequireAuth>
+              } />
+              <Route path="/rubrics/upload" element={
+                <RequireAuth>
+                  <Layout>
+                    <RubricUpload />
                   </Layout>
                 </RequireAuth>
               } />
