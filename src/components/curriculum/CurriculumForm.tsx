@@ -14,6 +14,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
+import React from "react"
 
 const formSchema = z.object({
   subject: z.string().min(1, "Subject is required"),
@@ -348,4 +349,4 @@ export const CurriculumForm = () => {
       </Form>
     </div>
   )
-})
+}
