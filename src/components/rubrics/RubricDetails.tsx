@@ -72,10 +72,11 @@ export const RubricDetails = () => {
   const criteria: Criterion[] = Array.isArray(rubric.criteria) 
     ? rubric.criteria.map(item => {
         if (typeof item === 'object' && item !== null) {
+          const jsonItem = item as { [key: string]: Json }
           return {
-            name: String(item.name || ''),
-            marks: Number(item.marks || 0),
-            description: String(item.description || '')
+            name: typeof jsonItem.name === 'string' ? jsonItem.name : '',
+            marks: typeof jsonItem.marks === 'number' ? jsonItem.marks : 0,
+            description: typeof jsonItem.description === 'string' ? jsonItem.description : ''
           }
         }
         return { name: '', marks: 0, description: '' }
