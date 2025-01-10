@@ -91,22 +91,22 @@ export const TaskCalendar = () => {
         </Button>
       </div>
       
-      <div className="grid gap-8 md:grid-cols-2 p-6">
-        <div className="space-y-4">
+      <div className="grid gap-8 md:grid-cols-2 p-8">
+        <div className="space-y-6">
           <Calendar
             mode="single"
             selected={date}
             onSelect={setDate}
-            className="rounded-md border w-full"
+            className="rounded-md border w-full shadow-sm"
           />
         </div>
         
-        <div className="space-y-6">
+        <div className="space-y-8">
           {tasks.map((task, index) => (
-            <Card key={index} className="p-6">
-              <h4 className="font-medium mb-2">{task.title}</h4>
-              <p className="text-sm text-muted-foreground mb-4">{task.description}</p>
-              <div className="flex flex-wrap gap-3">
+            <Card key={index} className="p-8 shadow-sm">
+              <h4 className="font-medium mb-3">{task.title}</h4>
+              <p className="text-sm text-muted-foreground mb-6">{task.description}</p>
+              <div className="flex flex-wrap gap-4">
                 <Button
                   variant="outline"
                   size="sm"
