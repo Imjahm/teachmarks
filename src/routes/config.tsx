@@ -8,6 +8,7 @@ import { RubricsList } from "@/components/rubrics/RubricsList"
 import { RubricDetails } from "@/components/rubrics/RubricDetails"
 import { LessonPlanGenerator } from "@/components/lesson-plans/LessonPlanGenerator"
 import { CurriculumStandardsList } from "@/components/curriculum/CurriculumStandardsList"
+import { CurriculumForm } from "@/components/curriculum/CurriculumForm"
 import UserPersonas from "@/pages/UserPersonas"
 
 const withLayout = (Component: React.ComponentType) => (
@@ -28,6 +29,10 @@ export const routes: RouteObject[] = [
   {
     path: "/curriculum",
     element: withLayout(CurriculumStandardsList)
+  },
+  {
+    path: "/curriculum/new",
+    element: withLayout(CurriculumForm)
   },
   {
     path: "/rubrics",
