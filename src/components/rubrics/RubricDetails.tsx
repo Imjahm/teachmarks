@@ -2,13 +2,14 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, Trash, Edit } from "lucide-react"
+import { ArrowLeft, Trash, Edit, Sparkles } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import type { Database } from "@/types/database.types"
 import { useToast } from "@/components/ui/use-toast"
 import { calculateGrade } from "@/utils/gradeCalculation"
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 
 type Rubric = Database["public"]["Tables"]["rubrics"]["Row"]
 
@@ -27,6 +28,8 @@ export const RubricDetails = () => {
   const navigate = useNavigate()
   const { toast } = useToast()
   const [testMarks, setTestMarks] = useState<number>(0)
+  const [feedback, setFeedback] = useState<string>("")
+  const [isGeneratingFeedback, setIsGeneratingFeedback] = useState(false)
 
   const { data: rubric, isLoading } = useQuery({
     queryKey: ["rubrics", id],
@@ -62,6 +65,33 @@ export const RubricDetails = () => {
       description: "Rubric deleted successfully",
     })
     navigate("/rubrics")
+  }
+
+  const generateAIFeedback = async () => {
+    if (!rubric) return
+
+    setIsGeneratingFeedback(true)
+    try {
+      const response = await supabase.functions.invoke('generate-feedback', {
+        body: { rubric, marks: testMarks }
+      })
+
+      if (response.error) throw new Error(response.error.message)
+      setFeedback(response.data.feedback)
+      toast({
+        title: "Success",
+        description: "AI feedback generated successfully",
+      })
+    } catch (error) {
+      console.error('Error generating feedback:', error)
+      toast({
+        title: "Error",
+        description: "Failed to generate AI feedback",
+        variant: "destructive",
+      })
+    } finally {
+      setIsGeneratingFeedback(false)
+    }
   }
 
   if (isLoading) {
@@ -125,23 +155,43 @@ export const RubricDetails = () => {
       <div className="grid gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Grade Calculator</CardTitle>
+            <CardTitle>Grade Calculator & AI Feedback</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-4">
-              <div className="flex-1">
-                <Input
-                  type="number"
-                  value={testMarks}
-                  onChange={(e) => setTestMarks(Number(e.target.value))}
-                  min={0}
-                  max={rubric.total_marks}
-                  placeholder="Enter marks to calculate grade"
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    value={testMarks}
+                    onChange={(e) => setTestMarks(Number(e.target.value))}
+                    min={0}
+                    max={rubric.total_marks}
+                    placeholder="Enter marks to calculate grade"
+                  />
+                </div>
+                <div className="text-2xl font-bold">
+                  Grade: {calculatedGrade}
+                </div>
+              </div>
+              
+              <div className="flex justify-end">
+                <Button 
+                  onClick={generateAIFeedback} 
+                  disabled={isGeneratingFeedback}
+                >
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  {isGeneratingFeedback ? "Generating..." : "Generate AI Feedback"}
+                </Button>
+              </div>
+
+              {feedback && (
+                <Textarea
+                  value={feedback}
+                  readOnly
+                  className="h-48 mt-4"
                 />
-              </div>
-              <div className="text-2xl font-bold">
-                Grade: {calculatedGrade}
-              </div>
+              )}
             </div>
           </CardContent>
         </Card>
