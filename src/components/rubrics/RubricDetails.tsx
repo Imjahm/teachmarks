@@ -9,6 +9,16 @@ import { useToast } from "@/components/ui/use-toast"
 
 type Rubric = Database["public"]["Tables"]["rubrics"]["Row"]
 
+interface Criterion {
+  name: string;
+  marks: number;
+  description: string;
+}
+
+interface GradeBoundaries {
+  [key: string]: number;
+}
+
 export const RubricDetails = () => {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -58,6 +68,9 @@ export const RubricDetails = () => {
     return <div>Rubric not found</div>
   }
 
+  const criteria = (rubric.criteria as Criterion[]) || []
+  const gradeBoundaries = (rubric.grade_boundaries as GradeBoundaries) || {}
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
@@ -96,14 +109,14 @@ export const RubricDetails = () => {
             <CardTitle>Criteria</CardTitle>
           </CardHeader>
           <CardContent>
-            {rubric.criteria && Array.isArray(rubric.criteria) ? (
+            {criteria.length > 0 ? (
               <div className="space-y-4">
-                {rubric.criteria.map((criterion: any, index: number) => (
+                {criteria.map((criterion, index) => (
                   <div key={index} className="border-b pb-4 last:border-0">
                     <h3 className="font-semibold mb-2">
                       {criterion.name} ({criterion.marks} marks)
                     </h3>
-                    <p className="text-muted-foreground">{criterion.description}</p>
+                    <p className="text-muted-foreground">{String(criterion.description)}</p>
                   </div>
                 ))}
               </div>
@@ -118,9 +131,9 @@ export const RubricDetails = () => {
             <CardTitle>Grade Boundaries</CardTitle>
           </CardHeader>
           <CardContent>
-            {rubric.grade_boundaries && typeof rubric.grade_boundaries === 'object' ? (
+            {Object.keys(gradeBoundaries).length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {Object.entries(rubric.grade_boundaries).map(([grade, marks]) => (
+                {Object.entries(gradeBoundaries).map(([grade, marks]) => (
                   <div key={grade} className="text-center p-4 border rounded-lg">
                     <div className="text-2xl font-bold">{grade}</div>
                     <div className="text-muted-foreground">{marks} marks</div>
