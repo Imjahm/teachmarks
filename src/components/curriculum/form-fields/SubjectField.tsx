@@ -46,7 +46,7 @@ export const SubjectField = ({ form, subjects }: SubjectFieldProps) => {
                       key={subject}
                       value={subject}
                       onSelect={() => {
-                        form.setValue("subject", subject)
+                        form.setValue("subject", subject, { shouldValidate: true })
                       }}
                     >
                       <Check

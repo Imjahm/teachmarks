@@ -46,7 +46,7 @@ export const CurriculumField = ({ form, curricula }: CurriculumFieldProps) => {
                       key={curriculum}
                       value={curriculum}
                       onSelect={() => {
-                        form.setValue("curriculum", curriculum)
+                        form.setValue("curriculum", curriculum, { shouldValidate: true })
                       }}
                     >
                       <Check

@@ -46,7 +46,7 @@ export const DisciplineField = ({ form, disciplines }: DisciplineFieldProps) => 
                       key={discipline}
                       value={discipline}
                       onSelect={() => {
-                        form.setValue("discipline", discipline)
+                        form.setValue("discipline", discipline, { shouldValidate: true })
                       }}
                     >
                       <Check
