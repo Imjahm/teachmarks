@@ -1,3 +1,4 @@
+import React, { useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
@@ -43,7 +44,7 @@ export const useCurriculumData = () => {
   })
 
   // Show error toasts if any queries fail
-  React.useEffect(() => {
+  useEffect(() => {
     if (subjectsError) toast.error("Failed to load subjects")
     if (disciplinesError) toast.error("Failed to load disciplines")
     if (curriculaError) toast.error("Failed to load curricula")
