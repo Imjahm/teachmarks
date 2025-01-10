@@ -2,7 +2,7 @@ import { useSession } from "@supabase/auth-helpers-react"
 import { WelcomeHeader } from "@/components/dashboard/WelcomeHeader"
 import { DashboardCard } from "@/components/dashboard/DashboardCard"
 import { StatsCard } from "@/components/dashboard/StatsCard"
-import { CurriculumStandardsList } from "@/components/curriculum/CurriculumStandardsList"
+import { UserPersonas } from "@/components/dashboard/UserPersonas"
 import { BookOpen, FileText, GraduationCap } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
@@ -46,7 +46,7 @@ const Index = () => {
         />
       </div>
 
-      <CurriculumStandardsList />
+      <UserPersonas />
     </div>
   )
 }
