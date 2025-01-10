@@ -2,8 +2,20 @@ import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 
+interface SubjectRecord {
+  subject: string
+}
+
+interface DisciplineRecord {
+  discipline: string
+}
+
+interface CurriculumRecord {
+  curriculum: string
+}
+
 export const useCurriculumData = () => {
-  const { data: subjectsData = [], isLoading: subjectsLoading, error: subjectsError } = useQuery({
+  const { data: subjectsData, isLoading: subjectsLoading, error: subjectsError } = useQuery({
     queryKey: ['subjects'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -12,11 +24,11 @@ export const useCurriculumData = () => {
         .order('subject')
       
       if (error) throw error
-      return data || []
+      return (data || []) as SubjectRecord[]
     },
   })
 
-  const { data: disciplinesData = [], isLoading: disciplinesLoading, error: disciplinesError } = useQuery({
+  const { data: disciplinesData, isLoading: disciplinesLoading, error: disciplinesError } = useQuery({
     queryKey: ['disciplines'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -25,11 +37,11 @@ export const useCurriculumData = () => {
         .order('discipline')
       
       if (error) throw error
-      return data || []
+      return (data || []) as DisciplineRecord[]
     },
   })
 
-  const { data: curriculaData = [], isLoading: curriculaLoading, error: curriculaError } = useQuery({
+  const { data: curriculaData, isLoading: curriculaLoading, error: curriculaError } = useQuery({
     queryKey: ['curricula'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -38,7 +50,7 @@ export const useCurriculumData = () => {
         .order('curriculum')
       
       if (error) throw error
-      return data || []
+      return (data || []) as CurriculumRecord[]
     },
   })
 
@@ -46,10 +58,9 @@ export const useCurriculumData = () => {
   if (disciplinesError) toast.error("Failed to load disciplines")
   if (curriculaError) toast.error("Failed to load curricula")
 
-  // Safely extract unique values with proper type handling
-  const subjects = Array.from(new Set(subjectsData.map(item => item.subject).filter(Boolean)))
-  const disciplines = Array.from(new Set(disciplinesData.map(item => item.discipline).filter(Boolean)))
-  const curricula = Array.from(new Set(curriculaData.map(item => item.curriculum).filter(Boolean)))
+  const subjects = Array.from(new Set((subjectsData || []).map(item => item.subject).filter(Boolean)))
+  const disciplines = Array.from(new Set((disciplinesData || []).map(item => item.discipline).filter(Boolean)))
+  const curricula = Array.from(new Set((curriculaData || []).map(item => item.curriculum).filter(Boolean)))
 
   return {
     subjects,

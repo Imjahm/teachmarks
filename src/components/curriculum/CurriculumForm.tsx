@@ -24,11 +24,13 @@ const formSchema = z.object({
   description: z.string().optional()
 })
 
+type FormValues = z.infer<typeof formSchema>
+
 export const CurriculumForm = () => {
   const navigate = useNavigate()
   const { subjects, curricula, disciplines, isLoading } = useCurriculumData()
   
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       subject: "",
@@ -40,7 +42,7 @@ export const CurriculumForm = () => {
     }
   })
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: FormValues) => {
     try {
       const { error } = await supabase
         .from('curriculum_standards')
@@ -53,7 +55,10 @@ export const CurriculumForm = () => {
           description: values.description || null
         })
 
-      if (error) throw error
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
 
       toast.success("Curriculum standard created successfully")
       navigate('/curriculum')
