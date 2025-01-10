@@ -75,8 +75,8 @@ export const TaskCalendar = () => {
   }
 
   return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between mb-4">
+    <Card className="w-full">
+      <div className="flex items-center justify-between p-6 border-b">
         <h3 className="text-lg font-semibold">Upcoming Tasks</h3>
         <Button
           variant="outline"
@@ -91,20 +91,22 @@ export const TaskCalendar = () => {
         </Button>
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          className="rounded-md border"
-        />
-        
+      <div className="grid gap-8 md:grid-cols-2 p-6">
         <div className="space-y-4">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={setDate}
+            className="rounded-md border w-full"
+          />
+        </div>
+        
+        <div className="space-y-6">
           {tasks.map((task, index) => (
-            <Card key={index} className="p-4">
-              <h4 className="font-medium">{task.title}</h4>
-              <p className="text-sm text-muted-foreground mb-2">{task.description}</p>
-              <div className="flex gap-2">
+            <Card key={index} className="p-6">
+              <h4 className="font-medium mb-2">{task.title}</h4>
+              <p className="text-sm text-muted-foreground mb-4">{task.description}</p>
+              <div className="flex flex-wrap gap-3">
                 <Button
                   variant="outline"
                   size="sm"
