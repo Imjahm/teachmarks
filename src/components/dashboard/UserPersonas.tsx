@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card"
-import { Teacher, Users, GraduationCap, ClipboardList } from "lucide-react"
+import { School, Users, GraduationCap, ClipboardList } from "lucide-react"
 
 interface PersonaCardProps {
   icon: React.ReactNode
@@ -52,7 +52,7 @@ const PersonaCard = ({ icon, title, needs, painPoints, expectations }: PersonaCa
 export const UserPersonas = () => {
   const personas = [
     {
-      icon: <Teacher className="w-5 h-5 text-primary" />,
+      icon: <School className="w-5 h-5 text-primary" />,
       title: "High School Teachers",
       needs: [
         "Efficient grading tools",
