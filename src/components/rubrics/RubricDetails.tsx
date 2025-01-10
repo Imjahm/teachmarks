@@ -6,6 +6,9 @@ import { ArrowLeft, Trash, Edit } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import type { Database } from "@/types/database.types"
 import { useToast } from "@/components/ui/use-toast"
+import { calculateGrade } from "@/utils/gradeCalculation"
+import { useState } from "react"
+import { Input } from "@/components/ui/input"
 
 type Rubric = Database["public"]["Tables"]["rubrics"]["Row"]
 
@@ -23,6 +26,7 @@ export const RubricDetails = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const { toast } = useToast()
+  const [testMarks, setTestMarks] = useState<number>(0)
 
   const { data: rubric, isLoading } = useQuery({
     queryKey: ["rubrics", id],
@@ -84,6 +88,8 @@ export const RubricDetails = () => {
         }), {} as GradeBoundaries)
       : {}
 
+  const calculatedGrade = calculateGrade(testMarks, gradeBoundaries)
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
@@ -117,6 +123,29 @@ export const RubricDetails = () => {
       </div>
 
       <div className="grid gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Grade Calculator</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <Input
+                  type="number"
+                  value={testMarks}
+                  onChange={(e) => setTestMarks(Number(e.target.value))}
+                  min={0}
+                  max={rubric.total_marks}
+                  placeholder="Enter marks to calculate grade"
+                />
+              </div>
+              <div className="text-2xl font-bold">
+                Grade: {calculatedGrade}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>Criteria</CardTitle>
