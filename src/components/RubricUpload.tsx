@@ -14,7 +14,7 @@ import { supabase } from "@/integrations/supabase/client"
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   exam_board: z.string().min(1, "Exam board is required"),
-  total_marks: z.string().transform((val) => parseInt(val, 10)),
+  total_marks: z.coerce.number().min(1, "Total marks must be greater than 0"),
   grade_boundaries: z.string().transform((val) => {
     try {
       return JSON.parse(val)
@@ -40,7 +40,7 @@ export const RubricUpload = () => {
     defaultValues: {
       title: "",
       exam_board: "",
-      total_marks: "",
+      total_marks: 0,
       grade_boundaries: "{}",
       criteria: "{}",
     },
@@ -123,6 +123,7 @@ export const RubricUpload = () => {
                       type="number"
                       placeholder="Enter total marks"
                       {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
                     />
                   </FormControl>
                   <FormMessage />
