@@ -92,7 +92,7 @@ export function ExamBoardSelect({ form, selectedBoard, onBoardChange }: ExamBoar
             <FormLabel>Subject</FormLabel>
             <Select 
               onValueChange={field.onChange} 
-              defaultValue={field.value}
+              value={field.value}
               disabled={!selectedBoard}
             >
               <FormControl>
