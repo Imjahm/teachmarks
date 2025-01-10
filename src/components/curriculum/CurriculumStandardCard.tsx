@@ -1,7 +1,9 @@
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ChevronRight } from "lucide-react"
+import { ChevronRight, Sparkles } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { useState } from "react"
+import { ContentGenerator } from "@/components/ai/ContentGenerator"
 
 interface CurriculumStandardCardProps {
   id: string
@@ -23,6 +25,7 @@ export const CurriculumStandardCard = ({
   description
 }: CurriculumStandardCardProps) => {
   const navigate = useNavigate()
+  const [showGenerator, setShowGenerator] = useState(false)
 
   return (
     <Card className="p-6 hover:shadow-lg transition-all duration-300">
@@ -39,16 +42,36 @@ export const CurriculumStandardCard = ({
           {description && (
             <p className="text-sm text-gray-600 font-roboto line-clamp-2">{description}</p>
           )}
+          
+          <div className="flex gap-2 mt-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowGenerator(!showGenerator)}
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              AI Generate
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(`/curriculum/${id}`)}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate(`/curriculum/${id}`)}
-          className="ml-4"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
       </div>
+
+      {showGenerator && (
+        <div className="mt-4">
+          <ContentGenerator
+            subject={subject}
+            topic={topic}
+            gradeLevel={gradeLevel}
+          />
+        </div>
+      )}
     </Card>
   )
 }
