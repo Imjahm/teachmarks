@@ -2,6 +2,7 @@ import { useSession } from "@supabase/auth-helpers-react"
 import { WelcomeHeader } from "@/components/dashboard/WelcomeHeader"
 import { DashboardCard } from "@/components/dashboard/DashboardCard"
 import { StatsCard } from "@/components/dashboard/StatsCard"
+import { TeacherBot } from "@/components/ai/TeacherBot"
 import { BookOpen, FileText, GraduationCap } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
@@ -35,14 +36,17 @@ const Index = () => {
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
-        <StatsCard
-          title="Recent Activity"
-          emptyMessage="No recent activity to show"
-        />
-        <StatsCard
-          title="Upcoming Tasks"
-          emptyMessage="No upcoming tasks"
-        />
+        <TeacherBot />
+        <div className="space-y-6">
+          <StatsCard
+            title="Recent Activity"
+            emptyMessage="No recent activity to show"
+          />
+          <StatsCard
+            title="Upcoming Tasks"
+            emptyMessage="No upcoming tasks"
+          />
+        </div>
       </div>
     </div>
   )
