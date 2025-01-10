@@ -91,8 +91,8 @@ export const TaskCalendar = () => {
         </Button>
       </div>
       
-      <div className="grid gap-8 md:grid-cols-2 p-8">
-        <div className="space-y-6">
+      <div className="flex flex-col space-y-8 p-8">
+        <div className="w-full max-w-lg mx-auto">
           <Calendar
             mode="single"
             selected={date}
@@ -101,7 +101,7 @@ export const TaskCalendar = () => {
           />
         </div>
         
-        <div className="space-y-8">
+        <div className="grid gap-6 md:grid-cols-2">
           {tasks.map((task, index) => (
             <Card key={index} className="p-8 shadow-sm">
               <h4 className="font-medium mb-3">{task.title}</h4>
