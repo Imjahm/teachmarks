@@ -3,7 +3,7 @@ import { DashboardCard } from "./DashboardCard"
 import { BookOpen, Plus, FileText } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
-export const RubricsDashboard = () => {
+const RubricsDashboard = () => {
   const navigate = useNavigate()
 
   return (
@@ -42,3 +42,5 @@ export const RubricsDashboard = () => {
     </div>
   )
 }
+
+export default RubricsDashboard

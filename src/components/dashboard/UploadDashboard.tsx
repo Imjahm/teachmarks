@@ -3,7 +3,7 @@ import { DashboardCard } from "./DashboardCard"
 import { Upload, FileText, Users } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
-export const UploadDashboard = () => {
+const UploadDashboard = () => {
   const navigate = useNavigate()
 
   return (
@@ -42,3 +42,5 @@ export const UploadDashboard = () => {
     </div>
   )
 }
+
+export default UploadDashboard

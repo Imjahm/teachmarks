@@ -3,7 +3,7 @@ import { DashboardCard } from "./DashboardCard"
 import { CheckSquare, Clock, History } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
-export const MarkingDashboard = () => {
+const MarkingDashboard = () => {
   const navigate = useNavigate()
 
   return (
@@ -42,3 +42,5 @@ export const MarkingDashboard = () => {
     </div>
   )
 }
+
+export default MarkingDashboard
