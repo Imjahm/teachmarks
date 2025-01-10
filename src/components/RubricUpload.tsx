@@ -10,10 +10,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft } from "lucide-react"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
+import { useState } from "react"
+import { ExamBoardSelect } from "./forms/ExamBoardSelect"
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  exam_board: z.string().min(1, "Exam board is required"),
+  examBoard: z.string().min(1, "Exam board is required"),
+  subject: z.string().min(1, "Subject is required"),
   total_marks: z.coerce.number().min(1, "Total marks must be greater than 0"),
   grade_boundaries: z.string().transform((val) => {
     try {
@@ -34,12 +37,14 @@ const formSchema = z.object({
 export const RubricUpload = () => {
   const navigate = useNavigate()
   const session = useSession()
+  const [selectedBoard, setSelectedBoard] = useState("")
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      exam_board: "",
+      examBoard: "",
+      subject: "",
       total_marks: 0,
       grade_boundaries: "{}",
       criteria: "{}",
@@ -49,7 +54,11 @@ export const RubricUpload = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const { error } = await supabase.from("rubrics").insert({
-        ...values,
+        title: values.title,
+        exam_board: values.examBoard,
+        total_marks: values.total_marks,
+        grade_boundaries: values.grade_boundaries,
+        criteria: values.criteria,
         teacher_id: session?.user?.id,
       })
 
@@ -98,18 +107,10 @@ export const RubricUpload = () => {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="exam_board"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Exam Board</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter exam board" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+            <ExamBoardSelect 
+              form={form} 
+              selectedBoard={selectedBoard} 
+              onBoardChange={setSelectedBoard} 
             />
 
             <FormField
