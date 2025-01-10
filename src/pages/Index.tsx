@@ -5,6 +5,7 @@ import { StatsCard } from "@/components/dashboard/StatsCard"
 import { TeacherBot } from "@/components/ai/TeacherBot"
 import { BookOpen, FileText, GraduationCap } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { Card } from "@/components/ui/card"
 
 const Index = () => {
   const session = useSession()
@@ -36,17 +37,19 @@ const Index = () => {
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
+        <Card className="p-6">
+          <div className="space-y-6">
+            <StatsCard
+              title="Recent Activity"
+              emptyMessage="No recent activity to show"
+            />
+            <StatsCard
+              title="Upcoming Tasks"
+              emptyMessage="No upcoming tasks"
+            />
+          </div>
+        </Card>
         <TeacherBot />
-        <div className="space-y-6">
-          <StatsCard
-            title="Recent Activity"
-            emptyMessage="No recent activity to show"
-          />
-          <StatsCard
-            title="Upcoming Tasks"
-            emptyMessage="No upcoming tasks"
-          />
-        </div>
       </div>
     </div>
   )
