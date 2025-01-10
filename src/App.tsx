@@ -12,6 +12,7 @@ import { RubricUpload } from "./components/RubricUpload"
 import { RubricsList } from "./components/rubrics/RubricsList"
 import { RubricDetails } from "./components/rubrics/RubricDetails"
 import { LessonPlanGenerator } from "./components/lesson-plans/LessonPlanGenerator"
+import { CurriculumStandardsList } from "./components/curriculum/CurriculumStandardsList"
 import { supabase } from "./integrations/supabase/client"
 
 const queryClient = new QueryClient()
@@ -32,6 +33,13 @@ const App = () => {
                 <RequireAuth>
                   <Layout>
                     <Index />
+                  </Layout>
+                </RequireAuth>
+              } />
+              <Route path="/curriculum" element={
+                <RequireAuth>
+                  <Layout>
+                    <CurriculumStandardsList />
                   </Layout>
                 </RequireAuth>
               } />

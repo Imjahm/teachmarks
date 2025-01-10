@@ -1,11 +1,12 @@
 import { useSession } from "@supabase/auth-helpers-react";
 import { useNavigate } from "react-router-dom";
-import { FileText, Upload, Users, BookOpen } from "lucide-react";
+import { FileText, Upload, Users, BookOpen, GraduationCap } from "lucide-react";
 import { WelcomeHeader } from "@/components/dashboard/WelcomeHeader";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { ResourceUpload } from "@/components/resources/ResourceUpload";
 import { ResourcesList } from "@/components/resources/ResourcesList";
+import { CurriculumStandardsList } from "@/components/curriculum/CurriculumStandardsList";
 
 const Index = () => {
   const session = useSession();
@@ -40,9 +41,16 @@ const Index = () => {
           description="Create marking schemes"
           onClick={() => navigate("/rubrics")}
         />
+        <DashboardCard
+          icon={GraduationCap}
+          title="Curriculum Standards"
+          description="Manage learning outcomes"
+          onClick={() => navigate("/curriculum")}
+        />
       </div>
 
       <div className="space-y-8">
+        <CurriculumStandardsList />
         <ResourceUpload />
         <div>
           <h2 className="text-2xl font-semibold mb-4">Your Resources</h2>
