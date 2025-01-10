@@ -1,5 +1,5 @@
 import { SidebarProvider, Sidebar, SidebarContent, SidebarTrigger, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar"
-import { FileText, Home, Upload, Users, BookOpen, GraduationCap, UserSquare2 } from "lucide-react"
+import { FileText, Home, Upload, Users, BookOpen, GraduationCap, UserSquare2, BookOpenCheck } from "lucide-react"
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -63,6 +63,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                       <a href="/personas">
                         <UserSquare2 className="w-4 h-4" />
                         <span>User Personas</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <a href="/resources">
+                        <BookOpenCheck className="w-4 h-4" />
+                        <span>Resources</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

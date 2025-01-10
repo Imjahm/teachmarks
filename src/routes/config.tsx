@@ -2,6 +2,7 @@ import { RouteObject } from "react-router-dom"
 import Layout from "@/components/Layout"
 import Index from "@/pages/Index"
 import Auth from "@/pages/Auth"
+import Resources from "@/pages/Resources"
 import { RubricUpload } from "@/components/RubricUpload"
 import { RubricsList } from "@/components/rubrics/RubricsList"
 import { RubricDetails } from "@/components/rubrics/RubricDetails"
@@ -47,5 +48,9 @@ export const routes: RouteObject[] = [
   {
     path: "/personas",
     element: withLayout(UserPersonas)
+  },
+  {
+    path: "/resources",
+    element: withLayout(Resources)
   }
 ]
