@@ -27,7 +27,7 @@ const formSchema = z.object({
 export const CurriculumForm = () => {
   const navigate = useNavigate()
   
-  const { data: subjects = [], isLoading: subjectsLoading } = useQuery({
+  const { data: subjects = [], isLoading: subjectsLoading, error: subjectsError } = useQuery({
     queryKey: ['subjects'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -36,11 +36,11 @@ export const CurriculumForm = () => {
         .order('subject')
       
       if (error) throw error
-      return [...new Set(data.map(item => item.subject))]
+      return [...new Set((data || []).map(item => item.subject))]
     },
   })
 
-  const { data: disciplines = [], isLoading: disciplinesLoading } = useQuery({
+  const { data: disciplines = [], isLoading: disciplinesLoading, error: disciplinesError } = useQuery({
     queryKey: ['disciplines'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -49,11 +49,11 @@ export const CurriculumForm = () => {
         .order('discipline')
       
       if (error) throw error
-      return [...new Set(data.map(item => item.discipline))]
+      return [...new Set((data || []).map(item => item.discipline))]
     },
   })
 
-  const { data: curricula = [], isLoading: curriculaLoading } = useQuery({
+  const { data: curricula = [], isLoading: curriculaLoading, error: curriculaError } = useQuery({
     queryKey: ['curricula'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -62,9 +62,16 @@ export const CurriculumForm = () => {
         .order('curriculum')
       
       if (error) throw error
-      return [...new Set(data.map(item => item.curriculum))]
+      return [...new Set((data || []).map(item => item.curriculum))]
     },
   })
+
+  // Show error toasts if any queries fail
+  React.useEffect(() => {
+    if (subjectsError) toast.error("Failed to load subjects")
+    if (disciplinesError) toast.error("Failed to load disciplines")
+    if (curriculaError) toast.error("Failed to load curricula")
+  }, [subjectsError, disciplinesError, curriculaError])
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -102,7 +109,7 @@ export const CurriculumForm = () => {
   }
 
   if (subjectsLoading || disciplinesLoading || curriculaLoading) {
-    return <div>Loading...</div>
+    return <div className="flex items-center justify-center p-6">Loading...</div>
   }
 
   return (
@@ -341,4 +348,4 @@ export const CurriculumForm = () => {
       </Form>
     </div>
   )
-}
+})
