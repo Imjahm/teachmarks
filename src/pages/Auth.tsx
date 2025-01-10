@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AuthError } from "@supabase/supabase-js";
+import { AuthError, AuthApiError } from "@supabase/supabase-js";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -15,12 +15,17 @@ const Auth = () => {
       if (event === "SIGNED_IN" && session) {
         navigate("/");
       }
+      if (event === 'SIGNED_OUT') {
+        setErrorMessage(""); // Clear errors on sign out
+      }
     });
 
     // Check initial auth state and handle any initial errors
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
         setErrorMessage(getErrorMessage(error));
+      } else if (session) {
+        navigate("/");
       }
     });
 
@@ -28,8 +33,19 @@ const Auth = () => {
   }, [navigate]);
 
   const getErrorMessage = (error: AuthError) => {
-    if (error.message.includes("email_provider_disabled")) {
-      return "Email authentication is currently disabled. Please contact the administrator to enable it.";
+    if (error instanceof AuthApiError) {
+      switch (error.code) {
+        case 'email_provider_disabled':
+          return "Email authentication is currently disabled. Please contact the administrator to enable it.";
+        case 'invalid_credentials':
+          return 'Invalid email or password. Please check your credentials and try again.';
+        case 'user_not_found':
+          return 'No user found with these credentials.';
+        case 'invalid_grant':
+          return 'Invalid login credentials.';
+        default:
+          return error.message;
+      }
     }
     return error.message;
   };
@@ -40,7 +56,6 @@ const Auth = () => {
         <div className="text-center space-y-6">
           <div className="flex justify-center">
             <div className="relative w-24 h-24">
-              {/* Abstract butterfly logo representation */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-20 h-20 relative">
                   <div className="absolute inset-0 transform rotate-45">
