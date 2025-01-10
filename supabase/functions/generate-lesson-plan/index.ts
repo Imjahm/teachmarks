@@ -14,7 +14,20 @@ serve(async (req) => {
   }
 
   try {
-    const { subject, topic } = await req.json();
+    const { subject, topic, yearGroup, duration, type } = await req.json();
+
+    let systemPrompt = '';
+    let userPrompt = '';
+
+    if (type === 'lesson-plan') {
+      systemPrompt = 'You are an experienced teacher who creates detailed lesson plans. Include clear learning objectives, activities, timings, resources needed, and assessment methods.';
+      userPrompt = `Create a detailed lesson plan for ${subject} on the topic of ${topic} for ${yearGroup} students. The lesson duration is ${duration}.`;
+    } else {
+      systemPrompt = 'You are an experienced teacher who creates comprehensive schemes of work. Include unit objectives, progression of topics, assessment opportunities, and cross-curricular links.';
+      userPrompt = `Create a detailed scheme of work for ${subject} focusing on ${topic} for ${yearGroup} students over ${duration}.`;
+    }
+
+    console.log('Generating content with prompt:', userPrompt);
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -25,22 +38,18 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
-          {
-            role: 'system',
-            content: 'You are an experienced teacher assistant that helps create detailed lesson plans. Include learning objectives, activities, and assessment methods.'
-          },
-          {
-            role: 'user',
-            content: `Create a lesson plan for ${subject} on the topic of ${topic}.`
-          }
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
         ],
       }),
     });
 
     const data = await response.json();
-    const lessonPlan = data.choices[0].message.content;
+    const content = data.choices[0].message.content;
 
-    return new Response(JSON.stringify({ lessonPlan }), {
+    console.log('Generated content successfully');
+
+    return new Response(JSON.stringify({ content }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
