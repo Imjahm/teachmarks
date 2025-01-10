@@ -11,6 +11,7 @@ const corsHeaders = {
 interface TeacherBotRequest {
   query: string
   context?: {
+    section?: string
     subject?: string
     gradeLevel?: number
     previousInteractions?: Array<{
@@ -30,9 +31,43 @@ serve(async (req) => {
     const { query, context }: TeacherBotRequest = await req.json()
     console.log('Processing teacher bot request:', { query, context })
 
-    let systemPrompt = 'You are an experienced teaching assistant helping teachers with their educational needs.'
+    let systemPrompt = `You are an experienced teaching assistant helping teachers with their educational needs. 
+You specialize in providing guidance and support for various teaching tasks.`
+
+    if (context?.section) {
+      systemPrompt += `\nYou are currently helping with ${context.section}.`
+      
+      // Add section-specific context
+      switch(context.section.toLowerCase()) {
+        case "dashboard":
+          systemPrompt += "\nFocus on explaining metrics, recent activities, and overall progress tracking."
+          break
+        case "upload":
+          systemPrompt += "\nHelp with uploading, organizing, and managing student work and resources."
+          break
+        case "students":
+          systemPrompt += "\nProvide guidance on student management, progress tracking, and generating insights."
+          break
+        case "marking":
+          systemPrompt += "\nAssist with assessment strategies, feedback generation, and grading consistency."
+          break
+        case "rubrics":
+          systemPrompt += "\nHelp create, edit, and apply assessment rubrics effectively."
+          break
+        case "lesson plans":
+          systemPrompt += "\nGuide through lesson planning, including objectives, activities, and assessments."
+          break
+        case "personas":
+          systemPrompt += "\nHelp manage and understand different user roles and their specific needs."
+          break
+        case "resources":
+          systemPrompt += "\nAssist with finding, organizing, and utilizing teaching resources effectively."
+          break
+      }
+    }
+
     if (context?.subject) {
-      systemPrompt += ` You specialize in ${context.subject}`
+      systemPrompt += `\nYou are focusing on ${context.subject}`
       if (context.gradeLevel) {
         systemPrompt += ` for grade ${context.gradeLevel}`
       }

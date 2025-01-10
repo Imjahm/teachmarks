@@ -1,16 +1,21 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
-import { MessageCircle, Send } from "lucide-react"
+import { MessageCircle, Send, Loader2 } from "lucide-react"
+import { useLocation } from "react-router-dom"
 
 interface Message {
   query: string
   response: string
   feedback?: number
+  context?: {
+    section?: string
+    subject?: string
+    gradeLevel?: number
+  }
 }
 
 interface TeacherBotProps {
@@ -22,6 +27,38 @@ export const TeacherBot = ({ subject, gradeLevel }: TeacherBotProps) => {
   const [query, setQuery] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
+  const location = useLocation()
+
+  // Get current section from the URL path
+  const getCurrentSection = () => {
+    const path = location.pathname.split("/")[1] || "dashboard"
+    return path.charAt(0).toUpperCase() + path.slice(1)
+  }
+
+  // Generate context-aware placeholder based on current section
+  const getPlaceholder = () => {
+    const section = getCurrentSection()
+    switch (section.toLowerCase()) {
+      case "dashboard":
+        return "Ask me about your dashboard metrics or recent activities..."
+      case "upload":
+        return "Need help uploading and organizing work?"
+      case "students":
+        return "Ask about student management and progress tracking..."
+      case "marking":
+        return "Need assistance with marking or feedback?"
+      case "rubrics":
+        return "Help with creating or applying rubrics..."
+      case "lesson-plans":
+        return "Ask me to help create or modify lesson plans..."
+      case "personas":
+        return "Questions about user roles and permissions?"
+      case "resources":
+        return "Need help finding or organizing resources?"
+      default:
+        return "Ask me anything about teaching..."
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,6 +70,7 @@ export const TeacherBot = ({ subject, gradeLevel }: TeacherBotProps) => {
         body: { 
           query,
           context: {
+            section: getCurrentSection(),
             subject,
             gradeLevel,
             previousInteractions: messages
@@ -42,7 +80,17 @@ export const TeacherBot = ({ subject, gradeLevel }: TeacherBotProps) => {
 
       if (error) throw error
 
-      setMessages(prev => [...prev, { query, response: data.response }])
+      const newMessage = { 
+        query, 
+        response: data.response,
+        context: {
+          section: getCurrentSection(),
+          subject,
+          gradeLevel
+        }
+      }
+
+      setMessages(prev => [...prev, newMessage])
       setQuery("")
       toast.success("Response generated successfully!")
     } catch (error) {
@@ -73,10 +121,17 @@ export const TeacherBot = ({ subject, gradeLevel }: TeacherBotProps) => {
             <div className="bg-muted p-3 rounded-lg">
               <p className="font-medium">You:</p>
               <p>{message.query}</p>
+              {message.context?.section && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  Context: {message.context.section}
+                  {message.context.subject && ` | ${message.context.subject}`}
+                  {message.context.gradeLevel && ` | Grade ${message.context.gradeLevel}`}
+                </p>
+              )}
             </div>
             <div className="bg-primary/10 p-3 rounded-lg">
               <p className="font-medium">Assistant:</p>
-              <p>{message.response}</p>
+              <p className="whitespace-pre-wrap">{message.response}</p>
             </div>
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5].map((rating) => (
@@ -98,12 +153,21 @@ export const TeacherBot = ({ subject, gradeLevel }: TeacherBotProps) => {
         <Input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Ask me anything about teaching..."
+          placeholder={getPlaceholder()}
           disabled={isLoading}
         />
         <Button type="submit" disabled={isLoading}>
-          <Send className="w-4 h-4 mr-2" />
-          {isLoading ? "Thinking..." : "Send"}
+          {isLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Thinking...
+            </>
+          ) : (
+            <>
+              <Send className="w-4 h-4 mr-2" />
+              Send
+            </>
+          )}
         </Button>
       </form>
     </Card>
