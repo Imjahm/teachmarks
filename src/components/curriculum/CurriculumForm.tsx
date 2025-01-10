@@ -9,6 +9,11 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
+import { useQuery } from "@tanstack/react-query"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Check, ChevronsUpDown } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 const formSchema = z.object({
   subject: z.string().min(1, "Subject is required"),
@@ -21,6 +26,45 @@ const formSchema = z.object({
 
 export const CurriculumForm = () => {
   const navigate = useNavigate()
+  
+  const { data: subjects = [], isLoading: subjectsLoading } = useQuery({
+    queryKey: ['subjects'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('subject_disciplines')
+        .select('subject')
+        .order('subject')
+      
+      if (error) throw error
+      return [...new Set(data.map(item => item.subject))]
+    },
+  })
+
+  const { data: disciplines = [], isLoading: disciplinesLoading } = useQuery({
+    queryKey: ['disciplines'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('subject_disciplines')
+        .select('discipline')
+        .order('discipline')
+      
+      if (error) throw error
+      return [...new Set(data.map(item => item.discipline))]
+    },
+  })
+
+  const { data: curricula = [], isLoading: curriculaLoading } = useQuery({
+    queryKey: ['curricula'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('curriculum_standards')
+        .select('curriculum')
+        .order('curriculum')
+      
+      if (error) throw error
+      return [...new Set(data.map(item => item.curriculum))]
+    },
+  })
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,6 +101,10 @@ export const CurriculumForm = () => {
     }
   }
 
+  if (subjectsLoading || disciplinesLoading || curriculaLoading) {
+    return <div>Loading...</div>
+  }
+
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-semibold mb-6">Create New Curriculum Standard</h1>
@@ -69,9 +117,48 @@ export const CurriculumForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Subject</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g. Mathematics" {...field} />
-                </FormControl>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "w-full justify-between",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value || "Select subject"}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Search subject..." />
+                      <CommandEmpty>No subject found.</CommandEmpty>
+                      <CommandGroup>
+                        {subjects.map((subject) => (
+                          <CommandItem
+                            key={subject}
+                            value={subject}
+                            onSelect={() => {
+                              form.setValue("subject", subject)
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                field.value === subject ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {subject}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}
@@ -83,9 +170,48 @@ export const CurriculumForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Curriculum</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g. Common Core" {...field} />
-                </FormControl>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "w-full justify-between",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value || "Select curriculum"}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Search curriculum..." />
+                      <CommandEmpty>No curriculum found.</CommandEmpty>
+                      <CommandGroup>
+                        {curricula.map((curriculum) => (
+                          <CommandItem
+                            key={curriculum}
+                            value={curriculum}
+                            onSelect={() => {
+                              form.setValue("curriculum", curriculum)
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                field.value === curriculum ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {curriculum}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}
@@ -136,9 +262,48 @@ export const CurriculumForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Discipline (Optional)</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g. Algebra" {...field} />
-                </FormControl>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "w-full justify-between",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value || "Select discipline"}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Search discipline..." />
+                      <CommandEmpty>No discipline found.</CommandEmpty>
+                      <CommandGroup>
+                        {disciplines.map((discipline) => (
+                          <CommandItem
+                            key={discipline}
+                            value={discipline}
+                            onSelect={() => {
+                              form.setValue("discipline", discipline)
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                field.value === discipline ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {discipline}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}
