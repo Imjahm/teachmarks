@@ -2,25 +2,22 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, Trash, Edit, Sparkles } from "lucide-react"
+import { ArrowLeft, Trash, Edit } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import type { Database } from "@/types/database.types"
 import { useToast } from "@/components/ui/use-toast"
-import { calculateGrade } from "@/utils/gradeCalculation"
 import { useState } from "react"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+import { GradeCalculator } from "./GradeCalculator"
+import { AIFeedback } from "./AIFeedback"
+import { CriteriaList } from "./CriteriaList"
+import { GradeBoundariesList } from "./GradeBoundaries"
 
 type Rubric = Database["public"]["Tables"]["rubrics"]["Row"]
 
 interface Criterion {
-  name: string;
-  marks: number;
-  description: string;
-}
-
-interface GradeBoundaries {
-  [key: string]: number;
+  name: string
+  marks: number
+  description: string
 }
 
 export const RubricDetails = () => {
@@ -110,15 +107,13 @@ export const RubricDetails = () => {
       }))
     : []
 
-  const gradeBoundaries: GradeBoundaries = 
+  const gradeBoundaries = 
     typeof rubric.grade_boundaries === 'object' && rubric.grade_boundaries !== null
       ? Object.entries(rubric.grade_boundaries as Record<string, any>).reduce((acc, [key, value]) => ({
           ...acc,
           [key]: typeof value === 'number' ? value : 0
-        }), {} as GradeBoundaries)
+        }), {} as Record<string, number>)
       : {}
-
-  const calculatedGrade = calculateGrade(testMarks, gradeBoundaries)
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -159,39 +154,18 @@ export const RubricDetails = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="flex-1">
-                  <Input
-                    type="number"
-                    value={testMarks}
-                    onChange={(e) => setTestMarks(Number(e.target.value))}
-                    min={0}
-                    max={rubric.total_marks}
-                    placeholder="Enter marks to calculate grade"
-                  />
-                </div>
-                <div className="text-2xl font-bold">
-                  Grade: {calculatedGrade}
-                </div>
-              </div>
+              <GradeCalculator
+                totalMarks={rubric.total_marks}
+                testMarks={testMarks}
+                gradeBoundaries={gradeBoundaries}
+                onMarksChange={setTestMarks}
+              />
               
-              <div className="flex justify-end">
-                <Button 
-                  onClick={generateAIFeedback} 
-                  disabled={isGeneratingFeedback}
-                >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  {isGeneratingFeedback ? "Generating..." : "Generate AI Feedback"}
-                </Button>
-              </div>
-
-              {feedback && (
-                <Textarea
-                  value={feedback}
-                  readOnly
-                  className="h-48 mt-4"
-                />
-              )}
+              <AIFeedback
+                feedback={feedback}
+                isGenerating={isGeneratingFeedback}
+                onGenerate={generateAIFeedback}
+              />
             </div>
           </CardContent>
         </Card>
@@ -201,20 +175,7 @@ export const RubricDetails = () => {
             <CardTitle>Criteria</CardTitle>
           </CardHeader>
           <CardContent>
-            {criteria.length > 0 ? (
-              <div className="space-y-4">
-                {criteria.map((criterion, index) => (
-                  <div key={index} className="border-b pb-4 last:border-0">
-                    <h3 className="font-semibold mb-2">
-                      {criterion.name} ({criterion.marks} marks)
-                    </h3>
-                    <p className="text-muted-foreground">{criterion.description}</p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-muted-foreground">No criteria defined</p>
-            )}
+            <CriteriaList criteria={criteria} />
           </CardContent>
         </Card>
 
@@ -223,18 +184,7 @@ export const RubricDetails = () => {
             <CardTitle>Grade Boundaries</CardTitle>
           </CardHeader>
           <CardContent>
-            {Object.keys(gradeBoundaries).length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {Object.entries(gradeBoundaries).map(([grade, marks]) => (
-                  <div key={grade} className="text-center p-4 border rounded-lg">
-                    <div className="text-2xl font-bold">{grade}</div>
-                    <div className="text-muted-foreground">{marks} marks</div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-muted-foreground">No grade boundaries defined</p>
-            )}
+            <GradeBoundariesList boundaries={gradeBoundaries} />
           </CardContent>
         </Card>
       </div>
