@@ -68,6 +68,13 @@ export default function Auth() {
               variables: {
                 sign_up: {
                   password_label: 'Password (min 6 characters, include letters and numbers)',
+                  email_label: 'Email',
+                  button_label: 'Sign up',
+                },
+                sign_in: {
+                  password_label: 'Password',
+                  email_label: 'Email',
+                  button_label: 'Sign in',
                 }
               }
             }}

@@ -13,6 +13,8 @@ export const getAuthErrorMessage = (error: AuthError): string => {
         return 'Invalid login credentials.';
       case 'validation_failed':
         return 'Password must be at least 6 characters long and contain at least one letter and one number.';
+      case 'user_already_registered':
+        return 'An account with this email already exists. Please try logging in instead.';
       default:
         return error.message;
     }
