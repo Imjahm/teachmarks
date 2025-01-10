@@ -3,6 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { UseFormReturn } from "react-hook-form"
 import { z } from "zod"
 import { examBoards } from "@/data/examBoards"
+import { SubjectSelect } from "./SubjectSelect"
 
 const formSchema = z.object({
   examBoard: z.string().min(1, "Exam board is required"),
@@ -52,33 +53,10 @@ export function ExamBoardSelect({ form, selectedBoard, onBoardChange }: ExamBoar
         )}
       />
 
-      <FormField
-        control={form.control}
-        name="subject"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Subject</FormLabel>
-            <Select 
-              onValueChange={field.onChange} 
-              value={field.value}
-              disabled={!selectedBoard}
-            >
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select subject" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {selectedBoardSubjects.map((subject) => (
-                  <SelectItem key={subject} value={subject}>
-                    {subject}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
+      <SubjectSelect 
+        form={form} 
+        subjects={selectedBoardSubjects}
+        disabled={!selectedBoard}
       />
     </>
   )
