@@ -1,8 +1,16 @@
-import { School, Users, GraduationCap, ClipboardList } from "lucide-react"
+import { LucideIcon } from "lucide-react"
 
-export const personas = [
+export type PersonaData = {
+  iconName: "School" | "Users" | "GraduationCap" | "ClipboardList"
+  title: string
+  needs: string[]
+  painPoints: string[]
+  expectations: string[]
+}
+
+export const personas: PersonaData[] = [
   {
-    icon: <School className="w-5 h-5 text-primary" />,
+    iconName: "School",
     title: "High School Teachers",
     needs: [
       "Efficient grading tools",
@@ -24,7 +32,7 @@ export const personas = [
     ]
   },
   {
-    icon: <Users className="w-5 h-5 text-primary" />,
+    iconName: "Users",
     title: "Curriculum Coordinators",
     needs: [
       "Curriculum alignment tools",
@@ -46,7 +54,7 @@ export const personas = [
     ]
   },
   {
-    icon: <GraduationCap className="w-5 h-5 text-primary" />,
+    iconName: "GraduationCap",
     title: "Department Heads",
     needs: [
       "Department performance overview",
@@ -68,7 +76,7 @@ export const personas = [
     ]
   },
   {
-    icon: <ClipboardList className="w-5 h-5 text-primary" />,
+    iconName: "ClipboardList",
     title: "Educational Administrators",
     needs: [
       "School-wide performance tracking",
@@ -89,4 +97,4 @@ export const personas = [
       "Data-driven insights"
     ]
   }
-] as const
+]
