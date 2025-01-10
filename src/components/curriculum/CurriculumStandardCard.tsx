@@ -9,6 +9,7 @@ interface CurriculumStandardCardProps {
   curriculum: string
   gradeLevel: number
   topic: string
+  discipline?: string
   description?: string
 }
 
@@ -18,6 +19,7 @@ export const CurriculumStandardCard = ({
   curriculum,
   gradeLevel,
   topic,
+  discipline,
   description
 }: CurriculumStandardCardProps) => {
   const navigate = useNavigate()
@@ -30,6 +32,9 @@ export const CurriculumStandardCard = ({
           <p className="text-sm text-gray-600 font-roboto mb-2">
             {curriculum} - Grade {gradeLevel}
           </p>
+          {discipline && (
+            <p className="text-sm text-secondary font-roboto mb-2">{discipline}</p>
+          )}
           <p className="text-sm font-roboto mb-4">{topic}</p>
           {description && (
             <p className="text-sm text-gray-600 font-roboto line-clamp-2">{description}</p>
