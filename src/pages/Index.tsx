@@ -1,52 +1,41 @@
 import { useSession } from "@supabase/auth-helpers-react"
 import { WelcomeHeader } from "@/components/dashboard/WelcomeHeader"
-import { DashboardCard } from "@/components/dashboard/DashboardCard"
-import { StatsCard } from "@/components/dashboard/StatsCard"
-import { CurriculumStandardsList } from "@/components/curriculum/CurriculumStandardsList"
-import { BookOpen, FileText, GraduationCap } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { useLocation } from "react-router-dom"
+import { UploadDashboard } from "@/components/dashboard/UploadDashboard"
+import { StudentsDashboard } from "@/components/dashboard/StudentsDashboard"
+import { MarkingDashboard } from "@/components/dashboard/MarkingDashboard"
+import { RubricsDashboard } from "@/components/dashboard/RubricsDashboard"
+import { LessonPlansDashboard } from "@/components/dashboard/LessonPlansDashboard"
 
 const Index = () => {
   const session = useSession()
-  const navigate = useNavigate()
+  const location = useLocation()
+
+  const renderDashboard = () => {
+    const path = location.pathname
+    
+    if (path.startsWith("/upload")) return <UploadDashboard />
+    if (path.startsWith("/students")) return <StudentsDashboard />
+    if (path.startsWith("/marking")) return <MarkingDashboard />
+    if (path.startsWith("/rubrics")) return <RubricsDashboard />
+    if (path.startsWith("/lesson-plans")) return <LessonPlansDashboard />
+    
+    return (
+      <div className="text-center py-12">
+        <h2 className="text-2xl font-semibold text-gray-700">
+          Welcome to your dashboard
+        </h2>
+        <p className="text-gray-500 mt-2">
+          Select a section from the sidebar to get started
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
       <WelcomeHeader email={session?.user?.email} />
-      
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <DashboardCard
-          icon={BookOpen}
-          title="Rubrics"
-          description="Create and manage marking rubrics"
-          onClick={() => navigate("/rubrics")}
-        />
-        <DashboardCard
-          icon={FileText}
-          title="Lesson Plans"
-          description="Generate and organize lesson plans"
-          onClick={() => navigate("/lesson-plans")}
-        />
-        <DashboardCard
-          icon={GraduationCap}
-          title="Curriculum Standards"
-          description="Manage learning outcomes"
-          onClick={() => navigate("/curriculum")}
-        />
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <StatsCard
-          title="Recent Activity"
-          emptyMessage="No recent activity to show"
-        />
-        <StatsCard
-          title="Upcoming Tasks"
-          emptyMessage="No upcoming tasks"
-        />
-      </div>
-
-      <CurriculumStandardsList />
+      {renderDashboard()}
     </div>
   )
 }
