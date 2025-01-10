@@ -72,7 +72,7 @@ export const RubricDetails = () => {
   const criteria: Criterion[] = Array.isArray(rubric.criteria) 
     ? rubric.criteria.map(item => {
         if (typeof item === 'object' && item !== null) {
-          const jsonItem = item as { [key: string]: Json }
+          const jsonItem = item as Record<string, Json>
           return {
             name: typeof jsonItem.name === 'string' ? jsonItem.name : '',
             marks: typeof jsonItem.marks === 'number' ? jsonItem.marks : 0,
@@ -86,7 +86,7 @@ export const RubricDetails = () => {
   // Parse and validate grade boundaries
   const gradeBoundaries: GradeBoundaries = 
     typeof rubric.grade_boundaries === 'object' && rubric.grade_boundaries !== null
-      ? Object.entries(rubric.grade_boundaries).reduce((acc, [key, value]) => ({
+      ? Object.entries(rubric.grade_boundaries as Record<string, Json>).reduce((acc, [key, value]) => ({
           ...acc,
           [key]: typeof value === 'number' ? value : 0
         }), {} as GradeBoundaries)
