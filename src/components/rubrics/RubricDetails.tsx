@@ -68,8 +68,14 @@ export const RubricDetails = () => {
     return <div>Rubric not found</div>
   }
 
-  const criteria = (rubric.criteria as Criterion[]) || []
-  const gradeBoundaries = (rubric.grade_boundaries as GradeBoundaries) || {}
+  // Safely cast the JSON data with type checking
+  const criteria = Array.isArray(rubric.criteria) 
+    ? (rubric.criteria as unknown as Criterion[])
+    : [] as Criterion[]
+
+  const gradeBoundaries = (typeof rubric.grade_boundaries === 'object' && rubric.grade_boundaries !== null)
+    ? (rubric.grade_boundaries as unknown as GradeBoundaries)
+    : {} as GradeBoundaries
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -147,5 +153,5 @@ export const RubricDetails = () => {
         </Card>
       </div>
     </div>
-  )
+  );
 }
