@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom"
 import { Auth as SupabaseAuth } from "@supabase/auth-ui-react"
 import { ThemeSupa } from "@supabase/auth-ui-shared"
 import { supabase } from "@/integrations/supabase/client"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { getAuthErrorMessage } from "@/utils/auth-errors"
 import { Loader2 } from "lucide-react"
+import { Logo } from "@/components/Logo"
 
 export default function Auth() {
   const navigate = useNavigate()
@@ -39,8 +40,8 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>
+        <CardHeader className="space-y-6 flex flex-col items-center">
+          <Logo size="lg" />
         </CardHeader>
         <CardContent>
           {error && (
@@ -58,8 +59,8 @@ export default function Auth() {
             appearance={{ 
               theme: ThemeSupa,
               style: {
-                button: { background: 'rgb(var(--primary))', color: 'white' },
-                anchor: { color: 'rgb(var(--primary))' },
+                button: { background: '#2563eb', color: 'white' },
+                anchor: { color: '#2563eb' },
               }
             }}
             providers={[]}
@@ -67,5 +68,5 @@ export default function Auth() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
