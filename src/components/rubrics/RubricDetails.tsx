@@ -68,14 +68,28 @@ export const RubricDetails = () => {
     return <div>Rubric not found</div>
   }
 
-  // Safely cast the JSON data with type checking
-  const criteria = Array.isArray(rubric.criteria) 
-    ? (rubric.criteria as unknown as Criterion[])
-    : [] as Criterion[]
+  // Parse and validate criteria
+  const criteria: Criterion[] = Array.isArray(rubric.criteria) 
+    ? rubric.criteria.map(item => {
+        if (typeof item === 'object' && item !== null) {
+          return {
+            name: String(item.name || ''),
+            marks: Number(item.marks || 0),
+            description: String(item.description || '')
+          }
+        }
+        return { name: '', marks: 0, description: '' }
+      })
+    : []
 
-  const gradeBoundaries = (typeof rubric.grade_boundaries === 'object' && rubric.grade_boundaries !== null)
-    ? (rubric.grade_boundaries as unknown as GradeBoundaries)
-    : {} as GradeBoundaries
+  // Parse and validate grade boundaries
+  const gradeBoundaries: GradeBoundaries = 
+    typeof rubric.grade_boundaries === 'object' && rubric.grade_boundaries !== null
+      ? Object.entries(rubric.grade_boundaries).reduce((acc, [key, value]) => ({
+          ...acc,
+          [key]: typeof value === 'number' ? value : 0
+        }), {} as GradeBoundaries)
+      : {}
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -122,7 +136,7 @@ export const RubricDetails = () => {
                     <h3 className="font-semibold mb-2">
                       {criterion.name} ({criterion.marks} marks)
                     </h3>
-                    <p className="text-muted-foreground">{String(criterion.description)}</p>
+                    <p className="text-muted-foreground">{criterion.description}</p>
                   </div>
                 ))}
               </div>
@@ -153,5 +167,5 @@ export const RubricDetails = () => {
         </Card>
       </div>
     </div>
-  );
+  )
 }
