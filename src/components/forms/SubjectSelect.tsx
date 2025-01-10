@@ -9,7 +9,7 @@ const formSchema = z.object({
 
 type SubjectSelectProps = {
   form: UseFormReturn<z.infer<typeof formSchema>>
-  subjects: string[]
+  subjects: readonly string[] | string[]
   disabled?: boolean
 }
 
