@@ -16,6 +16,9 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { supabase } from "@/integrations/supabase/client"
+import type { Database } from "@/types/database.types"
+
+type Rubric = Database["public"]["Tables"]["rubrics"]["Insert"]
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -47,14 +50,18 @@ export function RubricUpload() {
       const gradeBoundaries = JSON.parse(values.gradeBoundaries)
       const criteria = JSON.parse(values.criteria)
 
-      const { error } = await supabase.from("rubrics").insert({
+      const rubricData: Rubric = {
         title: values.title,
         exam_board: values.examBoard,
         grade_boundaries: gradeBoundaries,
         criteria: criteria,
         total_marks: values.totalMarks,
-        teacher_id: (await supabase.auth.getUser()).data.user?.id,
-      })
+        teacher_id: (await supabase.auth.getUser()).data.user?.id!,
+      }
+
+      const { error } = await supabase
+        .from("rubrics")
+        .insert(rubricData)
 
       if (error) throw error
 
