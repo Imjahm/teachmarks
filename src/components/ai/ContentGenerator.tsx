@@ -2,7 +2,6 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
 import {
@@ -12,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { GeneratedContent } from "./GeneratedContent"
 
 interface ContentGeneratorProps {
   subject: string
@@ -47,7 +47,6 @@ export const ContentGenerator = ({ subject, topic, gradeLevel }: ContentGenerato
   const handleRating = async (newRating: number) => {
     setRating(newRating)
     toast.success("Thank you for your feedback!")
-    // Here you could store the rating in a database for model improvement
   }
 
   return (
@@ -75,29 +74,11 @@ export const ContentGenerator = ({ subject, topic, gradeLevel }: ContentGenerato
       </Button>
 
       {generatedContent && (
-        <div className="space-y-4">
-          <Textarea
-            value={generatedContent}
-            readOnly
-            className="h-[400px] mt-2"
-          />
-          
-          <div className="space-y-2">
-            <Label>Rate this content</Label>
-            <div className="flex gap-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Button
-                  key={star}
-                  variant={rating === star ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handleRating(star)}
-                >
-                  {star}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
+        <GeneratedContent
+          content={generatedContent}
+          rating={rating}
+          onRate={handleRating}
+        />
       )}
     </Card>
   )

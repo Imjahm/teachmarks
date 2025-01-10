@@ -1,5 +1,7 @@
+import "https://deno.land/x/xhr@0.1.0/mod.ts"
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { Configuration, OpenAIApi } from "https://esm.sh/openai@3.2.1"
+
+const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,11 +15,6 @@ serve(async (req) => {
 
   try {
     const { subject, topic, gradeLevel, promptType } = await req.json()
-
-    const configuration = new Configuration({
-      apiKey: Deno.env.get('OPENAI_API_KEY'),
-    })
-    const openai = new OpenAIApi(configuration)
 
     let systemPrompt = 'You are an experienced teacher creating educational content.'
     let userPrompt = ''
@@ -36,22 +33,39 @@ serve(async (req) => {
         userPrompt = `Generate educational content about ${topic} in ${subject} for grade ${gradeLevel} students.`
     }
 
-    const completion = await openai.createChatCompletion({
-      model: "gpt-4",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
-      ],
-      temperature: 0.7,
-      max_tokens: 1500,
+    console.log('Generating content with prompt:', userPrompt)
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openAIApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 1500,
+      }),
     })
 
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error?.message || 'Failed to generate content')
+    }
+
+    const data = await response.json()
+    console.log('Generated content successfully')
+
     return new Response(
-      JSON.stringify({ content: completion.data.choices[0].message.content }),
+      JSON.stringify({ content: data.choices[0].message.content }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Error in generate-educational-content:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
