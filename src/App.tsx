@@ -1,20 +1,22 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { SessionContextProvider } from "@supabase/auth-helpers-react";
-import Layout from "./components/Layout";
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import { RubricUpload } from "./components/RubricUpload";
-import { supabase } from "./integrations/supabase/client";
+import { Toaster } from "@/components/ui/toaster"
+import { Toaster as Sonner } from "@/components/ui/sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { SessionContextProvider } from "@supabase/auth-helpers-react"
+import Layout from "./components/Layout"
+import Index from "./pages/Index"
+import Auth from "./pages/Auth"
+import { RubricUpload } from "./components/RubricUpload"
+import { RubricsList } from "./components/rubrics/RubricsList"
+import { RubricDetails } from "./components/rubrics/RubricDetails"
+import { supabase } from "./integrations/supabase/client"
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
 const App = () => {
-  const [supabaseClient] = useState(() => supabase);
+  const [supabaseClient] = useState(() => supabase)
 
   return (
     <SessionContextProvider supabaseClient={supabaseClient}>
@@ -32,10 +34,24 @@ const App = () => {
                   </Layout>
                 </RequireAuth>
               } />
+              <Route path="/rubrics" element={
+                <RequireAuth>
+                  <Layout>
+                    <RubricsList />
+                  </Layout>
+                </RequireAuth>
+              } />
               <Route path="/rubrics/upload" element={
                 <RequireAuth>
                   <Layout>
                     <RubricUpload />
+                  </Layout>
+                </RequireAuth>
+              } />
+              <Route path="/rubrics/:id" element={
+                <RequireAuth>
+                  <Layout>
+                    <RubricDetails />
                   </Layout>
                 </RequireAuth>
               } />
@@ -44,8 +60,8 @@ const App = () => {
         </TooltipProvider>
       </QueryClientProvider>
     </SessionContextProvider>
-  );
-};
+  )
+}
 
 const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<any>(null);
@@ -75,4 +91,4 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-export default App;
+export default App

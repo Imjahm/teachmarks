@@ -1,5 +1,5 @@
-import { SidebarProvider, Sidebar, SidebarContent, SidebarTrigger, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
-import { FileText, Home, Upload, Users, BookOpen } from "lucide-react";
+import { SidebarProvider, Sidebar, SidebarContent, SidebarTrigger, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar"
+import { FileText, Home, Upload, Users, BookOpen } from "lucide-react"
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -44,7 +44,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <a href="/rubrics/upload">
+                      <a href="/rubrics">
                         <BookOpen className="w-4 h-4" />
                         <span>Rubrics</span>
                       </a>
@@ -61,7 +61,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </main>
       </div>
     </SidebarProvider>
-  );
-};
+  )
+}
 
-export default Layout;
+export default Layout
