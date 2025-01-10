@@ -4,6 +4,8 @@ import { FileText, Upload, Users, BookOpen } from "lucide-react";
 import { WelcomeHeader } from "@/components/dashboard/WelcomeHeader";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { StatsCard } from "@/components/dashboard/StatsCard";
+import { ResourceUpload } from "@/components/resources/ResourceUpload";
+import { ResourcesList } from "@/components/resources/ResourcesList";
 
 const Index = () => {
   const session = useSession();
@@ -40,15 +42,12 @@ const Index = () => {
         />
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        <StatsCard
-          title="Recent Submissions"
-          emptyMessage="No recent submissions"
-        />
-        <StatsCard
-          title="Marking Progress"
-          emptyMessage="No work to mark"
-        />
+      <div className="space-y-8">
+        <ResourceUpload />
+        <div>
+          <h2 className="text-2xl font-semibold mb-4">Your Resources</h2>
+          <ResourcesList />
+        </div>
       </div>
     </div>
   );
