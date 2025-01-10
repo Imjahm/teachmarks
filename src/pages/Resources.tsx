@@ -46,7 +46,7 @@ const Resources = () => {
         {isLoading ? (
           <div>Loading resources...</div>
         ) : (
-          <ResourcesList resources={resources || []} />
+          <ResourcesList />
         )}
       </div>
     </div>
