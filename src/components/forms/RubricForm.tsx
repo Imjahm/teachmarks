@@ -13,13 +13,13 @@ import {
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import type { Database } from "@/types/database.types"
-
-type Rubric = Database["public"]["Tables"]["rubrics"]["Insert"]
+import { examBoards } from "@/data/examBoards"
+import { useState } from "react"
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   examBoard: z.string().min(1, "Exam board is required"),
+  subject: z.string().min(1, "Subject is required"),
   gradeBoundaries: z.string().min(1, "Grade boundaries are required"),
   criteria: z.string().min(1, "Criteria is required"),
   totalMarks: z.number().min(1, "Total marks must be greater than 0"),
@@ -31,16 +31,21 @@ type RubricFormProps = {
 }
 
 export function RubricForm({ onSubmit, isLoading }: RubricFormProps) {
+  const [selectedBoard, setSelectedBoard] = useState("")
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       examBoard: "",
+      subject: "",
       gradeBoundaries: "",
       criteria: "",
       totalMarks: 100,
     },
   })
+
+  const selectedBoardSubjects = examBoards.find(board => board.value === selectedBoard)?.subjects || []
 
   return (
     <Form {...form}>
@@ -65,16 +70,54 @@ export function RubricForm({ onSubmit, isLoading }: RubricFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Exam Board</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select 
+                onValueChange={(value) => {
+                  field.onChange(value)
+                  setSelectedBoard(value)
+                  form.setValue("subject", "") // Reset subject when board changes
+                }} 
+                defaultValue={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select exam board" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="AQA">AQA</SelectItem>
-                  <SelectItem value="Edexcel">Edexcel</SelectItem>
-                  <SelectItem value="OCR">OCR</SelectItem>
+                  {examBoards.map((board) => (
+                    <SelectItem key={board.value} value={board.value}>
+                      {board.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="subject"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Subject</FormLabel>
+              <Select 
+                onValueChange={field.onChange} 
+                defaultValue={field.value}
+                disabled={!selectedBoard}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select subject" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {selectedBoardSubjects.map((subject) => (
+                    <SelectItem key={subject} value={subject}>
+                      {subject}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />
