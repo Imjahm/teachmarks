@@ -1,28 +1,16 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { ContentGeneratorProps, PromptType } from "./types"
+import { ContentTypeSelect } from "./ContentTypeSelect"
 import { GeneratedContent } from "./GeneratedContent"
-
-interface ContentGeneratorProps {
-  subject: string
-  topic: string
-  gradeLevel: number
-}
 
 export const ContentGenerator = ({ subject, topic, gradeLevel }: ContentGeneratorProps) => {
   const [generatedContent, setGeneratedContent] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
-  const [promptType, setPromptType] = useState<string>("lesson")
+  const [promptType, setPromptType] = useState<PromptType>("lesson")
   const [rating, setRating] = useState<number | null>(null)
 
   const generateContent = async () => {
@@ -38,7 +26,7 @@ export const ContentGenerator = ({ subject, topic, gradeLevel }: ContentGenerato
       toast.success("Content generated successfully!")
     } catch (error) {
       console.error("Error generating content:", error)
-      toast.error("Failed to generate content")
+      toast.error("Failed to generate content. Please try again.")
     } finally {
       setIsGenerating(false)
     }
@@ -51,19 +39,7 @@ export const ContentGenerator = ({ subject, topic, gradeLevel }: ContentGenerato
 
   return (
     <Card className="p-6 space-y-4">
-      <div className="space-y-2">
-        <Label>Content Type</Label>
-        <Select value={promptType} onValueChange={setPromptType}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select content type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="lesson">Lesson Plan</SelectItem>
-            <SelectItem value="examples">Real-world Examples</SelectItem>
-            <SelectItem value="assessment">Assessment Questions</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <ContentTypeSelect value={promptType} onChange={setPromptType} />
 
       <Button 
         onClick={generateContent} 

@@ -1,10 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-
-interface ContentRatingProps {
-  rating: number | null
-  onRate: (rating: number) => void
-}
+import { ContentRatingProps } from "./types"
 
 export const ContentRating = ({ rating, onRate }: ContentRatingProps) => {
   return (

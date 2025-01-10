@@ -1,11 +1,6 @@
 import { Textarea } from "@/components/ui/textarea"
 import { ContentRating } from "./ContentRating"
-
-interface GeneratedContentProps {
-  content: string
-  rating: number | null
-  onRate: (rating: number) => void
-}
+import { GeneratedContentProps } from "./types"
 
 export const GeneratedContent = ({ content, rating, onRate }: GeneratedContentProps) => {
   return (
