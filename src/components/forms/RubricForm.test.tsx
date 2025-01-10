@@ -11,8 +11,8 @@ describe("RubricForm", () => {
 
   it("renders all form fields", () => {
     expect(screen.getByLabelText(/title/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/exam board/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/subject/i)).toBeInTheDocument()
+    expect(screen.getByText(/exam board/i)).toBeInTheDocument()
+    expect(screen.getByText(/subject/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/grade boundaries/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/criteria/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/total marks/i)).toBeInTheDocument()
