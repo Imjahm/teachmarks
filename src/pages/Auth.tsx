@@ -4,67 +4,48 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AuthError, AuthApiError } from "@supabase/supabase-js";
+import { getAuthErrorMessage } from "@/utils/auth-errors";
+import { Logo } from "@/components/Logo";
 
 const Auth = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session) {
+    const handleAuthChange = (session: any) => {
+      if (session) {
         navigate("/");
       }
-      if (event === 'SIGNED_OUT') {
-        setErrorMessage(""); // Clear errors on sign out
+    };
+
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        setErrorMessage(getAuthErrorMessage(error));
+      } else if (session) {
+        handleAuthChange(session);
       }
     });
 
-    // Check initial auth state and handle any initial errors
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error) {
-        setErrorMessage(getErrorMessage(error));
-      } else if (session) {
-        navigate("/");
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN") {
+        handleAuthChange(session);
+      }
+      if (event === 'SIGNED_OUT') {
+        setErrorMessage("");
       }
     });
 
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const getErrorMessage = (error: AuthError) => {
-    if (error instanceof AuthApiError) {
-      switch (error.code) {
-        case 'email_provider_disabled':
-          return "Email authentication is currently disabled. Please contact the administrator to enable it.";
-        case 'invalid_credentials':
-          return 'Invalid email or password. Please check your credentials and try again.';
-        case 'user_not_found':
-          return 'No user found with these credentials.';
-        case 'invalid_grant':
-          return 'Invalid login credentials.';
-        default:
-          return error.message;
-      }
-    }
-    return error.message;
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="max-w-md w-full space-y-8 p-10 bg-white rounded-xl shadow-lg">
         <div className="text-center space-y-6">
           <div className="flex justify-center">
-            <div className="relative w-24 h-24">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-20 h-20 relative">
-                  <div className="absolute inset-0 transform rotate-45">
-                    <div className="w-10 h-10 bg-primary rounded-tl-full rounded-br-full absolute top-0 left-0 opacity-80"></div>
-                    <div className="w-10 h-10 bg-[#10b981] rounded-tl-full rounded-br-full absolute bottom-0 right-0 opacity-80"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Logo />
           </div>
           <div>
             <h1 className="font-poppins font-semibold text-4xl text-gray-900">EduEumaeus</h1>
@@ -73,7 +54,7 @@ const Auth = () => {
         </div>
         
         {errorMessage && (
-          <Alert variant="destructive" className="mb-6">
+          <Alert variant="destructive">
             <AlertDescription>{errorMessage}</AlertDescription>
           </Alert>
         )}
