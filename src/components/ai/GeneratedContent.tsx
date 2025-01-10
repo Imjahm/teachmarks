@@ -1,16 +1,36 @@
+import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { ContentRating } from "./ContentRating"
 import { GeneratedContentProps } from "./types"
+import { Loader2 } from "lucide-react"
 
-export const GeneratedContent = ({ content, rating, onRate }: GeneratedContentProps) => {
+export const GeneratedContent = ({ content, isLoading }: GeneratedContentProps) => {
+  if (isLoading) {
+    return (
+      <div className="flex justify-center p-4">
+        <Loader2 className="w-6 h-6 animate-spin" />
+      </div>
+    )
+  }
+
+  if (!content) {
+    return null
+  }
+
   return (
     <div className="space-y-4">
       <Textarea
         value={content}
         readOnly
-        className="h-[400px] mt-2"
+        className="h-[200px]"
       />
-      <ContentRating rating={rating} onRate={onRate} />
+      <Button
+        variant="outline"
+        onClick={() => {
+          navigator.clipboard.writeText(content)
+        }}
+      >
+        Copy to Clipboard
+      </Button>
     </div>
   )
 }

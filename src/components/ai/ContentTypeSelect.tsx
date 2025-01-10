@@ -5,23 +5,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Label } from "@/components/ui/label"
 import { ContentTypeSelectProps } from "./types"
 
-export const ContentTypeSelect = ({ value, onChange }: ContentTypeSelectProps) => {
+export const ContentTypeSelect = ({ selectedType, onTypeChange }: ContentTypeSelectProps) => {
   return (
-    <div className="space-y-2">
-      <Label>Content Type</Label>
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger>
-          <SelectValue placeholder="Select content type" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="lesson">Lesson Plan</SelectItem>
-          <SelectItem value="examples">Real-world Examples</SelectItem>
-          <SelectItem value="assessment">Assessment Questions</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
+    <Select value={selectedType} onValueChange={(value) => onTypeChange(value as any)}>
+      <SelectTrigger>
+        <SelectValue placeholder="Select content type" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="lesson-plan">Lesson Plan</SelectItem>
+        <SelectItem value="activity">Activity</SelectItem>
+        <SelectItem value="assessment">Assessment</SelectItem>
+        <SelectItem value="resources">Resources</SelectItem>
+      </SelectContent>
+    </Select>
   )
 }

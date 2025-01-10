@@ -1,20 +1,20 @@
 import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
+import { Star } from "lucide-react"
 import { ContentRatingProps } from "./types"
 
-export const ContentRating = ({ rating, onRate }: ContentRatingProps) => {
+export const ContentRating = ({ onRate, rating }: ContentRatingProps) => {
   return (
     <div className="space-y-2">
-      <Label>Rate this content</Label>
+      <p className="text-sm text-muted-foreground">How helpful was this content?</p>
       <div className="flex gap-2">
-        {[1, 2, 3, 4, 5].map((star) => (
+        {[1, 2, 3, 4, 5].map((value) => (
           <Button
-            key={star}
-            variant={rating === star ? "default" : "outline"}
+            key={value}
+            variant={rating === value ? "default" : "outline"}
             size="sm"
-            onClick={() => onRate(star)}
+            onClick={() => onRate(value)}
           >
-            {star}
+            <Star className={`w-4 h-4 ${rating === value ? "fill-current" : ""}`} />
           </Button>
         ))}
       </div>

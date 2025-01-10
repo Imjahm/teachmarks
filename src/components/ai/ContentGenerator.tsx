@@ -1,57 +1,59 @@
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { toast } from "sonner"
-import { supabase } from "@/integrations/supabase/client"
-import { ContentGeneratorProps, PromptType } from "./types"
 import { ContentTypeSelect } from "./ContentTypeSelect"
 import { GeneratedContent } from "./GeneratedContent"
+import { ContentRating } from "./ContentRating"
+import { ContentGeneratorProps, PromptType } from "./types"
+import { supabase } from "@/integrations/supabase/client"
+import { toast } from "sonner"
 
 export const ContentGenerator = ({ subject, topic, gradeLevel }: ContentGeneratorProps) => {
-  const [generatedContent, setGeneratedContent] = useState("")
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [promptType, setPromptType] = useState<PromptType>("lesson")
-  const [rating, setRating] = useState<number | null>(null)
+  const [selectedType, setSelectedType] = useState<PromptType>("lesson-plan")
+  const [content, setContent] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [rating, setRating] = useState<number>()
 
   const generateContent = async () => {
-    setIsGenerating(true)
+    setIsLoading(true)
     try {
       const { data, error } = await supabase.functions.invoke('generate-educational-content', {
-        body: { subject, topic, gradeLevel, promptType }
+        body: { 
+          type: selectedType,
+          subject,
+          topic,
+          gradeLevel
+        }
       })
 
       if (error) throw error
 
-      setGeneratedContent(data.content)
+      setContent(data.content)
       toast.success("Content generated successfully!")
     } catch (error) {
       console.error("Error generating content:", error)
-      toast.error("Failed to generate content. Please try again.")
+      toast.error("Failed to generate content")
     } finally {
-      setIsGenerating(false)
+      setIsLoading(false)
     }
   }
 
-  const handleRating = async (newRating: number) => {
-    setRating(newRating)
+  const handleRating = async (rating: number) => {
+    setRating(rating)
     toast.success("Thank you for your feedback!")
   }
 
   return (
     <Card className="p-6 space-y-4">
-      <ContentTypeSelect value={promptType} onChange={setPromptType} />
-
-      <Button 
-        onClick={generateContent} 
-        disabled={isGenerating}
-        className="w-full"
-      >
-        {isGenerating ? "Generating..." : "Generate Content"}
-      </Button>
-
-      {generatedContent && (
-        <GeneratedContent
-          content={generatedContent}
+      <ContentTypeSelect
+        selectedType={selectedType}
+        onTypeChange={setSelectedType}
+      />
+      <GeneratedContent
+        content={content}
+        isLoading={isLoading}
+      />
+      {content && (
+        <ContentRating
           rating={rating}
           onRate={handleRating}
         />
