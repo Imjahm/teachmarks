@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Trash, Edit } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
-import type { Database } from "@/types/database.types"
+import type { Database, Json } from "@/types/database.types"
 import { useToast } from "@/components/ui/use-toast"
 
 type Rubric = Database["public"]["Tables"]["rubrics"]["Row"]
