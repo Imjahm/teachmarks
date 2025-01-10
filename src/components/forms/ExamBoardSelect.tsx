@@ -62,7 +62,7 @@ export function ExamBoardSelect({ form, selectedBoard, onBoardChange }: ExamBoar
                           const value = currentValue === field.value ? "" : currentValue
                           field.onChange(value)
                           onBoardChange(value)
-                          form.setValue("subject", "") // Reset subject when board changes
+                          form.setValue("subject", "")
                           setOpen(false)
                         }}
                       >
