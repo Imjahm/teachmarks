@@ -1,60 +1,55 @@
-import { useState } from "react"
-import { useToast } from "@/hooks/use-toast"
+import { useSession } from "@supabase/auth-helpers-react"
+import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
+import { RubricForm } from "@/components/forms/RubricForm"
 import { supabase } from "@/integrations/supabase/client"
-import type { Database } from "@/types/database.types"
-import { RubricForm } from "./forms/RubricForm"
-import { z } from "zod"
+import { useState } from "react"
 
-type Rubric = Database["public"]["Tables"]["rubrics"]["Insert"]
-
-const formSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  examBoard: z.string().min(1, "Exam board is required"),
-  gradeBoundaries: z.string().min(1, "Grade boundaries are required"),
-  criteria: z.string().min(1, "Criteria is required"),
-  totalMarks: z.number().min(1, "Total marks must be greater than 0"),
-})
-
-export function RubricUpload() {
-  const { toast } = useToast()
+export const RubricUpload = () => {
+  const session = useSession()
+  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const handleSubmit = async (values: any) => {
+    if (!session?.user?.id) {
+      toast.error("You must be logged in to upload rubrics")
+      return
+    }
+
     setIsLoading(true)
     try {
-      // Parse JSON strings to objects
+      // Validate and parse JSON strings
       const gradeBoundaries = JSON.parse(values.gradeBoundaries)
       const criteria = JSON.parse(values.criteria)
 
-      const rubricData: Rubric = {
-        title: values.title,
-        exam_board: values.examBoard,
-        grade_boundaries: gradeBoundaries,
-        criteria: criteria,
-        total_marks: values.totalMarks,
-        teacher_id: (await supabase.auth.getUser()).data.user?.id!,
-      }
-
       const { error } = await supabase
         .from("rubrics")
-        .insert(rubricData)
+        .insert({
+          title: values.title,
+          exam_board: values.examBoard,
+          grade_boundaries: gradeBoundaries,
+          criteria: criteria,
+          total_marks: values.totalMarks,
+          teacher_id: session.user.id,
+        })
 
       if (error) throw error
 
-      toast({
-        title: "Success",
-        description: "Rubric has been uploaded successfully",
-      })
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to upload rubric. Please check your input and try again.",
-        variant: "destructive",
-      })
+      toast.success("Rubric uploaded successfully")
+      navigate("/")
+    } catch (error: any) {
+      toast.error(error.message || "Failed to upload rubric")
     } finally {
       setIsLoading(false)
     }
   }
 
-  return <RubricForm onSubmit={onSubmit} isLoading={isLoading} />
+  return (
+    <div className="max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-6">Upload Rubric</h1>
+      <div className="bg-white rounded-lg p-6 shadow-sm">
+        <RubricForm onSubmit={handleSubmit} isLoading={isLoading} />
+      </div>
+    </div>
+  )
 }
