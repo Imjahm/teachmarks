@@ -47,6 +47,9 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Sign out the user first to force navigation to auth page
+    supabase.auth.signOut();
+    
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
