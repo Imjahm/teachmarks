@@ -64,6 +64,13 @@ export default function Auth() {
               }
             }}
             providers={[]}
+            localization={{
+              variables: {
+                sign_up: {
+                  password_label: 'Password (min 6 characters, include letters and numbers)',
+                }
+              }
+            }}
           />
         </CardContent>
       </Card>

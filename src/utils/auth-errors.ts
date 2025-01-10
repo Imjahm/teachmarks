@@ -11,6 +11,8 @@ export const getAuthErrorMessage = (error: AuthError): string => {
         return 'No user found with these credentials.';
       case 'invalid_grant':
         return 'Invalid login credentials.';
+      case 'validation_failed':
+        return 'Password must be at least 6 characters long and contain at least one letter and one number.';
       default:
         return error.message;
     }
