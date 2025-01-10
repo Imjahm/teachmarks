@@ -6,9 +6,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { UseFormReturn } from "react-hook-form"
+import { CurriculumFormValues } from "@/types/curriculum"
 
 interface CurriculumFieldProps {
-  form: UseFormReturn<any>
+  form: UseFormReturn<CurriculumFormValues>
   curricula: string[]
 }
 
