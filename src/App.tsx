@@ -13,6 +13,7 @@ import { RubricsList } from "./components/rubrics/RubricsList"
 import { RubricDetails } from "./components/rubrics/RubricDetails"
 import { LessonPlanGenerator } from "./components/lesson-plans/LessonPlanGenerator"
 import { CurriculumStandardsList } from "./components/curriculum/CurriculumStandardsList"
+import UserPersonas from "./pages/UserPersonas"
 import { supabase } from "./integrations/supabase/client"
 
 const queryClient = new QueryClient()
@@ -68,6 +69,13 @@ const App = () => {
                 <RequireAuth>
                   <Layout>
                     <LessonPlanGenerator />
+                  </Layout>
+                </RequireAuth>
+              } />
+              <Route path="/personas" element={
+                <RequireAuth>
+                  <Layout>
+                    <UserPersonas />
                   </Layout>
                 </RequireAuth>
               } />
