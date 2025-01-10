@@ -5,17 +5,16 @@ import { TaskCalendar } from "@/components/dashboard/TaskCalendar"
 import { TeacherBot } from "@/components/ai/TeacherBot"
 import { BookOpen, FileText, GraduationCap } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import { Card } from "@/components/ui/card"
 
 const Index = () => {
   const session = useSession()
   const navigate = useNavigate()
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-7xl mx-auto space-y-6">
       <WelcomeHeader email={session?.user?.email} />
       
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <DashboardCard
           icon={BookOpen}
           title="Rubrics"
@@ -36,9 +35,13 @@ const Index = () => {
         />
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <TaskCalendar />
-        <TeacherBot />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <TaskCalendar />
+        </div>
+        <div className="bg-white rounded-lg shadow-sm">
+          <TeacherBot />
+        </div>
       </div>
     </div>
   )

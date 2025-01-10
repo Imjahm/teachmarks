@@ -17,23 +17,27 @@ export const WelcomeHeader = ({ email }: WelcomeHeaderProps) => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row justify-between items-center mb-12 bg-white rounded-lg p-6 shadow-sm">
-      <div className="flex items-center gap-6 mb-4 md:mb-0">
-        <Logo size="sm" showText={false} />
-        <div>
-          <h1 className="text-3xl font-bold font-poppins bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Welcome back
-          </h1>
-          <p className="text-gray-600 font-roboto">{email}</p>
+    <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="flex items-center gap-6">
+          <div className="bg-primary/5 p-3 rounded-lg">
+            <Logo size="sm" showText={false} />
+          </div>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold font-poppins bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Welcome back
+            </h1>
+            <p className="text-gray-600 font-roboto mt-1">{email}</p>
+          </div>
         </div>
+        <Button 
+          variant="outline" 
+          onClick={handleSignOut}
+          className="hover:bg-primary hover:text-white transition-colors duration-300 font-roboto w-full md:w-auto"
+        >
+          Sign Out
+        </Button>
       </div>
-      <Button 
-        variant="outline" 
-        onClick={handleSignOut}
-        className="hover:bg-primary hover:text-white transition-colors duration-300 font-roboto"
-      >
-        Sign Out
-      </Button>
     </div>
   );
 };
