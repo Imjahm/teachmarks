@@ -109,13 +109,13 @@ export const TeacherBot = ({ subject, gradeLevel }: TeacherBotProps) => {
   }
 
   return (
-    <Card className="p-6 space-y-4 h-[calc(100vh-12rem)]">
+    <Card className="p-6 space-y-4">
       <div className="flex items-center gap-2 mb-4">
         <MessageCircle className="w-5 h-5" />
         <h2 className="text-lg font-semibold">AI Teaching Assistant</h2>
       </div>
 
-      <div className="space-y-4 h-[calc(100%-10rem)] overflow-y-auto">
+      <div className="space-y-4 max-h-[400px] overflow-y-auto">
         {messages.map((message, index) => (
           <div key={index} className="space-y-2">
             <div className="bg-muted p-3 rounded-lg">
@@ -149,13 +149,12 @@ export const TeacherBot = ({ subject, gradeLevel }: TeacherBotProps) => {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="flex gap-2 mt-auto">
+      <form onSubmit={handleSubmit} className="flex gap-2">
         <Input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={getPlaceholder()}
           disabled={isLoading}
-          className="flex-1"
         />
         <Button type="submit" disabled={isLoading}>
           {isLoading ? (
