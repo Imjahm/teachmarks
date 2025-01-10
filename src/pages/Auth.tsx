@@ -17,6 +17,13 @@ const Auth = () => {
       }
     });
 
+    // Check initial auth state and handle any initial errors
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        setErrorMessage(getErrorMessage(error));
+      }
+    });
+
     return () => subscription.unsubscribe();
   }, [navigate]);
 
