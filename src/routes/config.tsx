@@ -3,6 +3,8 @@ import Layout from "@/components/Layout"
 import Index from "@/pages/Index"
 import Auth from "@/pages/Auth"
 import Resources from "@/pages/Resources"
+import Upload from "@/pages/Upload"
+import Marking from "@/pages/Marking"
 import { RubricUpload } from "@/components/RubricUpload"
 import { RubricsList } from "@/components/rubrics/RubricsList"
 import { RubricDetails } from "@/components/rubrics/RubricDetails"
@@ -45,6 +47,14 @@ export const routes: RouteObject[] = [
   {
     path: "/rubrics/:id",
     element: withLayout(RubricDetails)
+  },
+  {
+    path: "/upload",
+    element: withLayout(Upload)
+  },
+  {
+    path: "/marking",
+    element: withLayout(Marking)
   },
   {
     path: "/lesson-plans",
