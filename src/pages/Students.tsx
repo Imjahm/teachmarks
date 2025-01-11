@@ -7,19 +7,20 @@ import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { StudentForm } from "@/components/students/StudentForm"
 import { StudentList } from "@/components/students/StudentList"
-import { PostcodeSearch } from "@/components/students/PostcodeSearch"
+import { SchoolForm } from "@/components/schools/SchoolForm"
+import { SchoolList } from "@/components/schools/SchoolList"
 
 const Students = () => {
   const session = useSession()
   const { toast } = useToast()
-  const [selectedPostcode, setSelectedPostcode] = useState<string>("")
-  const [showForm, setShowForm] = useState(false)
+  const [selectedSchoolId, setSelectedSchoolId] = useState<string>("")
+  const [showStudentForm, setShowStudentForm] = useState(false)
 
-  const { data: students, isLoading: isLoadingStudents } = useQuery({
-    queryKey: ['students', session?.user?.id],
+  const { data: schools, isLoading: isLoadingSchools } = useQuery({
+    queryKey: ['schools'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('students')
+        .from('schools')
         .select('*')
         .eq('teacher_id', session?.user?.id)
       
@@ -28,17 +29,34 @@ const Students = () => {
     },
   })
 
-  const { data: examResults, isLoading: isLoadingExams } = useQuery({
-    queryKey: ['exam_results', session?.user?.id],
+  const { data: students, isLoading: isLoadingStudents } = useQuery({
+    queryKey: ['students', selectedSchoolId],
     queryFn: async () => {
+      if (!selectedSchoolId) return []
+      
+      const { data, error } = await supabase
+        .from('students')
+        .select('*')
+        .eq('school_id', selectedSchoolId)
+      
+      if (error) throw error
+      return data || []
+    },
+    enabled: !!selectedSchoolId,
+  })
+
+  const { data: examResults, isLoading: isLoadingExams } = useQuery({
+    queryKey: ['exam_results', selectedSchoolId],
+    queryFn: async () => {
+      if (!selectedSchoolId) return {}
+      
       const { data, error } = await supabase
         .from('exam_results')
         .select('*')
-        .eq('teacher_id', session?.user?.id)
+        .eq('school_id', selectedSchoolId)
       
       if (error) throw error
 
-      // Group exam results by student_id
       const groupedResults = (data || []).reduce((acc, result) => {
         if (!acc[result.student_id]) {
           acc[result.student_id] = []
@@ -49,35 +67,42 @@ const Students = () => {
 
       return groupedResults
     },
+    enabled: !!selectedSchoolId,
   })
 
-  const isLoading = isLoadingStudents || isLoadingExams
+  const isLoading = isLoadingStudents || isLoadingExams || isLoadingSchools
 
   return (
     <div className="space-y-8 p-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Students</h1>
-        <Button onClick={() => setShowForm(true)}>Add Student</Button>
+        <h1 className="text-3xl font-bold">Schools & Students</h1>
+        {selectedSchoolId && (
+          <Button onClick={() => setShowStudentForm(true)}>Add Student</Button>
+        )}
       </div>
       
-      <Card className="p-6">
-        <PostcodeSearch 
-          onSelect={(postcode) => setSelectedPostcode(postcode)} 
-        />
-      </Card>
+      <SchoolForm />
 
-      {showForm && (
+      <SchoolList 
+        schools={schools || []} 
+        isLoading={isLoadingSchools}
+        onSelect={setSelectedSchoolId}
+      />
+
+      {selectedSchoolId && showStudentForm && (
         <StudentForm 
-          onClose={() => setShowForm(false)}
-          selectedPostcode={selectedPostcode}
+          onClose={() => setShowStudentForm(false)}
+          selectedSchoolId={selectedSchoolId}
         />
       )}
 
-      <StudentList 
-        students={students || []} 
-        examResults={examResults || {}}
-        isLoading={isLoading} 
-      />
+      {selectedSchoolId && (
+        <StudentList 
+          students={students || []} 
+          examResults={examResults || {}}
+          isLoading={isLoading} 
+        />
+      )}
     </div>
   )
 }

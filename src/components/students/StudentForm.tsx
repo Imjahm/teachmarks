@@ -10,10 +10,10 @@ import { X } from "lucide-react"
 
 interface StudentFormProps {
   onClose: () => void
-  selectedPostcode: string
+  selectedSchoolId: string
 }
 
-export const StudentForm = ({ onClose, selectedPostcode }: StudentFormProps) => {
+export const StudentForm = ({ onClose, selectedSchoolId }: StudentFormProps) => {
   const session = useSession()
   const { toast } = useToast()
   const queryClient = useQueryClient()
@@ -21,7 +21,6 @@ export const StudentForm = ({ onClose, selectedPostcode }: StudentFormProps) => 
     name: "",
     age: "",
     class: "",
-    postcode: selectedPostcode,
   })
 
   const createStudent = useMutation({
@@ -32,6 +31,7 @@ export const StudentForm = ({ onClose, selectedPostcode }: StudentFormProps) => 
           {
             ...data,
             age: parseInt(data.age),
+            school_id: selectedSchoolId,
             teacher_id: session?.user?.id,
           }
         ])
@@ -100,15 +100,6 @@ export const StudentForm = ({ onClose, selectedPostcode }: StudentFormProps) => 
             required
             value={formData.class}
             onChange={(e) => setFormData(prev => ({ ...prev, class: e.target.value }))}
-          />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium mb-1">Postcode</label>
-          <Input
-            required
-            value={formData.postcode}
-            onChange={(e) => setFormData(prev => ({ ...prev, postcode: e.target.value }))}
           />
         </div>
 
