@@ -1,24 +1,27 @@
 import { Card } from "@/components/ui/card"
 
+interface ExamResult {
+  id: string
+  score: number
+  feedback: string | null
+  rubric_id: string
+}
+
 interface Student {
   id: string
   name: string
   age: number
   class: string
   postcode: string
-  exam_results: Array<{
-    id: string
-    score: number
-    feedback: string
-  }>
 }
 
 interface StudentListProps {
   students: Student[]
+  examResults: Record<string, ExamResult[]>
   isLoading: boolean
 }
 
-export const StudentList = ({ students, isLoading }: StudentListProps) => {
+export const StudentList = ({ students, examResults, isLoading }: StudentListProps) => {
   if (isLoading) {
     return <div>Loading students...</div>
   }
@@ -41,11 +44,11 @@ export const StudentList = ({ students, isLoading }: StudentListProps) => {
             <p>Class: {student.class}</p>
             <p>Postcode: {student.postcode}</p>
           </div>
-          {student.exam_results.length > 0 && (
+          {examResults[student.id]?.length > 0 && (
             <div className="mt-4">
               <h4 className="font-medium text-sm mb-2">Exam Results</h4>
               <div className="space-y-1">
-                {student.exam_results.map((result) => (
+                {examResults[student.id].map((result) => (
                   <div key={result.id} className="text-sm">
                     <span>Score: {result.score}</span>
                     {result.feedback && (

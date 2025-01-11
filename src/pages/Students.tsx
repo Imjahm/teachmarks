@@ -2,9 +2,8 @@ import { useState } from "react"
 import { useSession } from "@supabase/auth-helpers-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { StudentForm } from "@/components/students/StudentForm"
 import { StudentList } from "@/components/students/StudentList"
@@ -16,21 +15,43 @@ const Students = () => {
   const [selectedPostcode, setSelectedPostcode] = useState<string>("")
   const [showForm, setShowForm] = useState(false)
 
-  const { data: students, isLoading } = useQuery({
+  const { data: students, isLoading: isLoadingStudents } = useQuery({
     queryKey: ['students', session?.user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('students')
-        .select(`
-          *,
-          exam_results (*)
-        `)
+        .select('*')
         .eq('teacher_id', session?.user?.id)
       
       if (error) throw error
-      return data
+      return data || []
     },
   })
+
+  const { data: examResults, isLoading: isLoadingExams } = useQuery({
+    queryKey: ['exam_results', session?.user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('exam_results')
+        .select('*')
+        .eq('teacher_id', session?.user?.id)
+      
+      if (error) throw error
+
+      // Group exam results by student_id
+      const groupedResults = (data || []).reduce((acc, result) => {
+        if (!acc[result.student_id]) {
+          acc[result.student_id] = []
+        }
+        acc[result.student_id].push(result)
+        return acc
+      }, {} as Record<string, typeof data>)
+
+      return groupedResults
+    },
+  })
+
+  const isLoading = isLoadingStudents || isLoadingExams
 
   return (
     <div className="space-y-8 p-8">
@@ -52,7 +73,11 @@ const Students = () => {
         />
       )}
 
-      <StudentList students={students || []} isLoading={isLoading} />
+      <StudentList 
+        students={students || []} 
+        examResults={examResults || {}}
+        isLoading={isLoading} 
+      />
     </div>
   )
 }
