@@ -65,7 +65,7 @@ export const RubricUpload = () => {
       if (error) throw error
 
       toast.success("Rubric created successfully")
-      navigate("/students")
+      navigate("/rubrics")
     } catch (error) {
       console.error("Error creating rubric:", error)
       toast.error("Failed to create rubric")
@@ -82,10 +82,10 @@ export const RubricUpload = () => {
       <Button
         variant="outline"
         className="mb-6"
-        onClick={() => navigate("/students")}
+        onClick={() => navigate("/rubrics")}
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
-        Back to Students
+        Back to Rubrics
       </Button>
 
       <div className="space-y-6">
