@@ -1,5 +1,5 @@
 import { SidebarProvider, Sidebar, SidebarContent, SidebarTrigger, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar"
-import { FileText, Home, BookOpen, GraduationCap, UserSquare2, BookOpenCheck, Upload, CheckSquare } from "lucide-react"
+import { FileText, Home, BookOpen, GraduationCap, UserSquare2, BookOpenCheck, Upload, CheckSquare, BarChart } from "lucide-react"
 import { useLocation } from "react-router-dom"
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -66,6 +66,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                       <a href="/resources" data-active={location.pathname === "/resources"}>
                         <BookOpenCheck className="w-4 h-4" />
                         <span>Resources</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <a href="/school-results" data-active={location.pathname === "/school-results"}>
+                        <BarChart className="w-4 h-4" />
+                        <span>School Results</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
