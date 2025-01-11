@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { GradeBoundariesList } from "./GradeBoundaries"
 import { CriteriaList } from "./CriteriaList"
 import { MarkingForm } from "../marking/MarkingForm"
+import { MarkingList } from "../marking/MarkingList"
 import { GradeBoundarySuggestions } from "./GradeBoundarySuggestions"
 import { toast } from "sonner"
 
@@ -79,6 +80,11 @@ export function RubricDetails() {
             gradeBoundaries={rubric.grade_boundaries}
             criteria={rubric.criteria}
           />
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-semibold mb-4">Previous Markings</h2>
+          <MarkingList rubricId={rubric.id} />
         </section>
       </div>
     </div>
