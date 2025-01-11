@@ -37,45 +37,21 @@ const Students = () => {
   const { data: students, isLoading: isLoadingStudents } = useQuery({
     queryKey: ['students', selectedSchoolId],
     queryFn: async () => {
-      if (!selectedSchoolId) return []
+      if (!selectedSchoolId || !session?.user?.id) return []
       
       const { data, error } = await supabase
         .from('students')
         .select('*')
         .eq('school_id', selectedSchoolId)
+        .eq('teacher_id', session.user.id)
       
       if (error) throw error
       return data || []
     },
-    enabled: !!selectedSchoolId,
+    enabled: !!selectedSchoolId && !!session?.user?.id,
   })
 
-  const { data: examResults, isLoading: isLoadingExams } = useQuery({
-    queryKey: ['exam_results', selectedSchoolId],
-    queryFn: async () => {
-      if (!selectedSchoolId) return {}
-      
-      const { data, error } = await supabase
-        .from('exam_results')
-        .select('*')
-        .eq('school_id', selectedSchoolId)
-      
-      if (error) throw error
-
-      const groupedResults = (data || []).reduce((acc, result) => {
-        if (!acc[result.student_id]) {
-          acc[result.student_id] = []
-        }
-        acc[result.student_id].push(result)
-        return acc
-      }, {} as Record<string, typeof data>)
-
-      return groupedResults
-    },
-    enabled: !!selectedSchoolId,
-  })
-
-  const isLoading = isLoadingStudents || isLoadingExams || isLoadingSchools
+  const isLoading = isLoadingStudents || isLoadingSchools
 
   if (!session) {
     return (
@@ -112,7 +88,7 @@ const Students = () => {
       {selectedSchoolId && (
         <StudentList 
           students={students || []} 
-          examResults={examResults || {}}
+          examResults={{}}
           isLoading={isLoading} 
         />
       )}

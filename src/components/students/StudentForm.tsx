@@ -25,6 +25,10 @@ export const StudentForm = ({ onClose, selectedSchoolId }: StudentFormProps) => 
 
   const createStudent = useMutation({
     mutationFn: async (data: typeof formData) => {
+      if (!session?.user?.id) {
+        throw new Error("User not authenticated")
+      }
+
       const { error } = await supabase
         .from('students')
         .insert([
@@ -32,7 +36,7 @@ export const StudentForm = ({ onClose, selectedSchoolId }: StudentFormProps) => 
             ...data,
             age: parseInt(data.age),
             school_id: selectedSchoolId,
-            teacher_id: session?.user?.id,
+            teacher_id: session.user.id,
           }
         ])
       
