@@ -6,6 +6,7 @@ import Resources from "@/pages/Resources"
 import Upload from "@/pages/Upload"
 import Marking from "@/pages/Marking"
 import SchoolResults from "@/pages/SchoolResults"
+import Students from "@/pages/Students"
 import { RubricUpload } from "@/components/RubricUpload"
 import { RubricsList } from "@/components/rubrics/RubricsList"
 import { RubricDetails } from "@/components/rubrics/RubricDetails"
@@ -68,6 +69,10 @@ export const routes: RouteObject[] = [
   {
     path: "/resources",
     element: withLayout(Resources)
+  },
+  {
+    path: "/students",
+    element: withLayout(Students)
   },
   {
     path: "/school-results",
