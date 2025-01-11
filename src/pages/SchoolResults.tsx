@@ -48,16 +48,12 @@ const SchoolResults = () => {
                 }
               }}
             >
-              <ResponsiveContainer>
-                <BarChart data={mockSchoolData.performanceData}>
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <ChartTooltip>
-                    <ChartTooltipContent />
-                  </ChartTooltip>
-                  <Bar dataKey="value" fill="#0088FE" />
-                </BarChart>
-              </ResponsiveContainer>
+              <BarChart data={mockSchoolData.performanceData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="value" fill="#0088FE" />
+              </BarChart>
             </ChartContainer>
           </div>
         </Card>
@@ -75,16 +71,12 @@ const SchoolResults = () => {
                 }
               }}
             >
-              <ResponsiveContainer>
-                <LineChart data={mockSchoolData.progressData}>
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip>
-                    <ChartTooltipContent />
-                  </ChartTooltip>
-                  <Line type="monotone" dataKey="progress" stroke="#00C49F" />
-                </LineChart>
-              </ResponsiveContainer>
+              <LineChart data={mockSchoolData.progressData}>
+                <XAxis dataKey="month" />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Line type="monotone" dataKey="progress" stroke="#00C49F" />
+              </LineChart>
             </ChartContainer>
           </div>
         </Card>
@@ -102,26 +94,22 @@ const SchoolResults = () => {
                 }
               }}
             >
-              <ResponsiveContainer>
-                <PieChart>
-                  <Pie
-                    data={mockSchoolData.gradeDistribution}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, value }) => `${name}: ${value}%`}
-                  >
-                    {mockSchoolData.gradeDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip>
-                    <ChartTooltipContent />
-                  </ChartTooltip>
-                </PieChart>
-              </ResponsiveContainer>
+              <PieChart>
+                <Pie
+                  data={mockSchoolData.gradeDistribution}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label={({ name, value }) => `${name}: ${value}%`}
+                >
+                  {mockSchoolData.gradeDistribution.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <ChartTooltip content={<ChartTooltipContent />} />
+              </PieChart>
             </ChartContainer>
           </div>
         </Card>
