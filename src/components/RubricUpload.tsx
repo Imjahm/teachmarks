@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Upload } from "lucide-react"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
 import { useState } from "react"
 import { ExamBoardSelect } from "./forms/ExamBoardSelect"
+import { Card } from "./ui/card"
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -38,6 +39,7 @@ export const RubricUpload = () => {
   const navigate = useNavigate()
   const session = useSession()
   const [selectedBoard, setSelectedBoard] = useState("")
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,7 +49,7 @@ export const RubricUpload = () => {
       subject: "",
       total_marks: 0,
       grade_boundaries: "{}",
-      criteria: "{}",
+      criteria: "[]",
     },
   })
 
@@ -72,6 +74,44 @@ export const RubricUpload = () => {
     }
   }
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setIsProcessing(true)
+    try {
+      const text = await file.text()
+      await processContent(text)
+    } catch (error) {
+      console.error('Error reading file:', error)
+      toast.error("Failed to read file")
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const processContent = async (content: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('process-rubric', {
+        body: { content }
+      })
+
+      if (error) throw error
+
+      if (data.grade_boundaries) {
+        form.setValue('grade_boundaries', JSON.stringify(data.grade_boundaries, null, 2))
+      }
+      if (data.criteria) {
+        form.setValue('criteria', JSON.stringify(data.criteria, null, 2))
+      }
+
+      toast.success("Content processed successfully")
+    } catch (error) {
+      console.error('Error processing content:', error)
+      toast.error("Failed to process content")
+    }
+  }
+
   return (
     <div className="max-w-2xl mx-auto">
       <Button
@@ -90,6 +130,21 @@ export const RubricUpload = () => {
             Upload a new rubric with grade boundaries and criteria
           </p>
         </div>
+
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Upload Document</h3>
+          <div className="space-y-4">
+            <Input
+              type="file"
+              accept=".txt,.doc,.docx,.pdf"
+              onChange={handleFileUpload}
+              disabled={isProcessing}
+            />
+            <p className="text-sm text-muted-foreground">
+              Upload a document containing grade boundaries and criteria, or manually enter them below
+            </p>
+          </div>
+        </Card>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
