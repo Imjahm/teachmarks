@@ -37,16 +37,21 @@ export const routes: RouteObject[] = [
     element: withLayout(CurriculumForm)
   },
   {
-    path: "/rubrics",
-    element: withLayout(RubricsList)
-  },
-  {
-    path: "/rubrics/upload",
-    element: withLayout(RubricUpload)
-  },
-  {
-    path: "/rubrics/:id",
-    element: withLayout(RubricDetails)
+    path: "/students",
+    children: [
+      {
+        path: "",
+        element: withLayout(RubricsList)
+      },
+      {
+        path: "upload",
+        element: withLayout(RubricUpload)
+      },
+      {
+        path: ":id",
+        element: withLayout(RubricDetails)
+      }
+    ]
   },
   {
     path: "/upload",
