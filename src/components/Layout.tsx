@@ -1,7 +1,10 @@
 import { SidebarProvider, Sidebar, SidebarContent, SidebarTrigger, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar"
-import { FileText, Home, Upload, Users, BookOpen, GraduationCap, UserSquare2, BookOpenCheck } from "lucide-react"
+import { FileText, Home, BookOpen, GraduationCap, UserSquare2, BookOpenCheck } from "lucide-react"
+import { useLocation } from "react-router-dom"
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
+  const location = useLocation()
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -12,7 +15,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <a href="/">
+                      <a href="/" data-active={location.pathname === "/"}>
                         <Home className="w-4 h-4" />
                         <span>Dashboard</span>
                       </a>
@@ -20,31 +23,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <a href="/upload">
-                        <Upload className="w-4 h-4" />
-                        <span>Upload Work</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="/students">
-                        <Users className="w-4 h-4" />
-                        <span>Students</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="/marking">
-                        <FileText className="w-4 h-4" />
-                        <span>Marking</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="/rubrics">
+                      <a href="/rubrics" data-active={location.pathname.startsWith("/rubrics")}>
                         <BookOpen className="w-4 h-4" />
                         <span>Rubrics</span>
                       </a>
@@ -52,7 +31,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <a href="/lesson-plans">
+                      <a href="/lesson-plans" data-active={location.pathname === "/lesson-plans"}>
                         <GraduationCap className="w-4 h-4" />
                         <span>Lesson Plans</span>
                       </a>
@@ -60,7 +39,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <a href="/personas">
+                      <a href="/personas" data-active={location.pathname === "/personas"}>
                         <UserSquare2 className="w-4 h-4" />
                         <span>User Personas</span>
                       </a>
@@ -68,7 +47,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <a href="/resources">
+                      <a href="/resources" data-active={location.pathname === "/resources"}>
                         <BookOpenCheck className="w-4 h-4" />
                         <span>Resources</span>
                       </a>
