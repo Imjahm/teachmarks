@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { useState } from "react"
 import { toast } from "sonner"
+import { supabase } from "@/integrations/supabase/client"
 
 interface FileUploadSectionProps {
   onProcessed: (data: { grade_boundaries: string, criteria: string }) => void
