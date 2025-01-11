@@ -1,57 +1,58 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { useSession } from "@supabase/auth-helpers-react"
 import { Card } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { useToast } from "@/components/ui/use-toast"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
-
-interface School {
-  id: string
-  name: string
-}
+import { StudentForm } from "@/components/students/StudentForm"
+import { StudentList } from "@/components/students/StudentList"
+import { PostcodeSearch } from "@/components/students/PostcodeSearch"
 
 const Students = () => {
-  const [schools, setSchools] = useState<School[]>([])
-  const [selectedSchool, setSelectedSchool] = useState<string>("")
+  const session = useSession()
+  const { toast } = useToast()
+  const [selectedPostcode, setSelectedPostcode] = useState<string>("")
+  const [showForm, setShowForm] = useState(false)
 
-  useEffect(() => {
-    const fetchSchools = async () => {
+  const { data: students, isLoading } = useQuery({
+    queryKey: ['students', session?.user?.id],
+    queryFn: async () => {
       const { data, error } = await supabase
-        .from('schools')
-        .select('*')
+        .from('students')
+        .select(`
+          *,
+          exam_results (*)
+        `)
+        .eq('teacher_id', session?.user?.id)
       
-      if (error) {
-        console.error('Error fetching schools:', error)
-        return
-      }
-
-      setSchools(data)
-    }
-
-    fetchSchools()
-  }, [])
+      if (error) throw error
+      return data
+    },
+  })
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-3xl font-bold">Students</h1>
+    <div className="space-y-8 p-8">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Students</h1>
+        <Button onClick={() => setShowForm(true)}>Add Student</Button>
+      </div>
       
       <Card className="p-6">
-        <div className="space-y-4">
-          <div className="flex items-center space-x-4">
-            <label className="text-sm font-medium">Select School:</label>
-            <Select value={selectedSchool} onValueChange={setSelectedSchool}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Select a school" />
-              </SelectTrigger>
-              <SelectContent>
-                {schools.map((school) => (
-                  <SelectItem key={school.id} value={school.id}>
-                    {school.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+        <PostcodeSearch 
+          onSelect={(postcode) => setSelectedPostcode(postcode)} 
+        />
       </Card>
+
+      {showForm && (
+        <StudentForm 
+          onClose={() => setShowForm(false)}
+          selectedPostcode={selectedPostcode}
+        />
+      )}
+
+      <StudentList students={students || []} isLoading={isLoading} />
     </div>
   )
 }
