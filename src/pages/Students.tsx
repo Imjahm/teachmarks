@@ -28,7 +28,14 @@ const Students = () => {
         .select('*')
         .eq('teacher_id', session.user.id)
       
-      if (error) throw error
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch schools",
+          variant: "destructive",
+        })
+        throw error
+      }
       return data || []
     },
     enabled: !!session?.user?.id,
@@ -45,7 +52,14 @@ const Students = () => {
         .eq('school_id', selectedSchoolId)
         .eq('teacher_id', session.user.id)
       
-      if (error) throw error
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch students",
+          variant: "destructive",
+        })
+        throw error
+      }
       return data || []
     },
     enabled: !!selectedSchoolId && !!session?.user?.id,

@@ -44,19 +44,31 @@ export type Database = {
       }
       schools: {
         Row: {
+          address: string
           created_at: string
           id: string
+          latitude: number
+          longitude: number
           name: string
+          teacher_id: string
         }
         Insert: {
+          address: string
           created_at?: string
           id?: string
+          latitude: number
+          longitude: number
           name: string
+          teacher_id: string
         }
         Update: {
+          address?: string
           created_at?: string
           id?: string
+          latitude?: number
+          longitude?: number
           name?: string
+          teacher_id?: string
         }
         Relationships: []
       }
