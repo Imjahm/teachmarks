@@ -4,15 +4,14 @@ import { useNavigate } from "react-router-dom"
 import { useSession } from "@supabase/auth-helpers-react"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { ArrowLeft, Upload } from "lucide-react"
+import { Form } from "@/components/ui/form"
+import { ArrowLeft } from "lucide-react"
 import { toast } from "sonner"
 import { supabase } from "@/integrations/supabase/client"
 import { useState } from "react"
 import { ExamBoardSelect } from "./forms/ExamBoardSelect"
-import { Card } from "./ui/card"
+import { FileUploadSection } from "./rubrics/FileUploadSection"
+import { RubricFormFields } from "./rubrics/RubricFormFields"
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -39,7 +38,6 @@ export const RubricUpload = () => {
   const navigate = useNavigate()
   const session = useSession()
   const [selectedBoard, setSelectedBoard] = useState("")
-  const [isProcessing, setIsProcessing] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,42 +72,9 @@ export const RubricUpload = () => {
     }
   }
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    setIsProcessing(true)
-    try {
-      const text = await file.text()
-      await processContent(text)
-    } catch (error) {
-      console.error('Error reading file:', error)
-      toast.error("Failed to read file")
-    } finally {
-      setIsProcessing(false)
-    }
-  }
-
-  const processContent = async (content: string) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('process-rubric', {
-        body: { content }
-      })
-
-      if (error) throw error
-
-      if (data.grade_boundaries) {
-        form.setValue('grade_boundaries', JSON.stringify(data.grade_boundaries, null, 2))
-      }
-      if (data.criteria) {
-        form.setValue('criteria', JSON.stringify(data.criteria, null, 2))
-      }
-
-      toast.success("Content processed successfully")
-    } catch (error) {
-      console.error('Error processing content:', error)
-      toast.error("Failed to process content")
-    }
+  const handleProcessedContent = (data: { grade_boundaries: string, criteria: string }) => {
+    form.setValue('grade_boundaries', data.grade_boundaries)
+    form.setValue('criteria', data.criteria)
   }
 
   return (
@@ -131,97 +96,17 @@ export const RubricUpload = () => {
           </p>
         </div>
 
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Upload Document</h3>
-          <div className="space-y-4">
-            <Input
-              type="file"
-              accept=".txt,.doc,.docx,.pdf"
-              onChange={handleFileUpload}
-              disabled={isProcessing}
-            />
-            <p className="text-sm text-muted-foreground">
-              Upload a document containing grade boundaries and criteria, or manually enter them below
-            </p>
-          </div>
-        </Card>
+        <FileUploadSection onProcessed={handleProcessedContent} />
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter rubric title" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <ExamBoardSelect 
               form={form} 
               selectedBoard={selectedBoard} 
               onBoardChange={setSelectedBoard} 
             />
-
-            <FormField
-              control={form.control}
-              name="total_marks"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Total Marks</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter total marks"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="grade_boundaries"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Grade Boundaries (JSON)</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder='{"A": 80, "B": 70, "C": 60}'
-                      className="font-mono"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="criteria"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Criteria (JSON)</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder='[{"name": "Analysis", "marks": 20}, {"name": "Evaluation", "marks": 30}]'
-                      className="font-mono"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            
+            <RubricFormFields form={form} />
 
             <Button type="submit">Create Rubric</Button>
           </form>
