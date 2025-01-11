@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { calculateGrade } from "@/utils/gradeCalculation"
 import { GradeCalculator } from "@/components/rubrics/GradeCalculator"
 import { CriteriaList } from "@/components/rubrics/CriteriaList"
+import { GradeBoundariesUpload } from "@/components/upload/GradeBoundariesUpload"
 
 interface MarkingFormProps {
   rubricId: string
@@ -16,12 +17,14 @@ interface MarkingFormProps {
   criteria: Array<{ name: string; marks: number; description?: string }>
 }
 
-export function MarkingForm({ rubricId, totalMarks, gradeBoundaries, criteria }: MarkingFormProps) {
+export function MarkingForm({ rubricId, totalMarks, gradeBoundaries: initialGradeBoundaries, criteria: initialCriteria }: MarkingFormProps) {
   const session = useSession()
   const [studentName, setStudentName] = useState("")
   const [marks, setMarks] = useState(0)
   const [feedback, setFeedback] = useState("")
   const [criteriaMarks, setCriteriaMarks] = useState<Record<string, number>>({})
+  const [gradeBoundaries, setGradeBoundaries] = useState(initialGradeBoundaries)
+  const [criteria, setCriteria] = useState(initialCriteria)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -72,8 +75,15 @@ export function MarkingForm({ rubricId, totalMarks, gradeBoundaries, criteria }:
     setMarks(totalCriteriaMarks)
   }
 
+  const handleProcessedContent = (data: { gradeBoundaries: Record<string, number>, criteria: Array<{ name: string, marks: number }> }) => {
+    setGradeBoundaries(data.gradeBoundaries)
+    setCriteria(data.criteria)
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      <GradeBoundariesUpload onProcessed={handleProcessedContent} />
+
       <div>
         <label htmlFor="studentName" className="block text-sm font-medium mb-2">
           Student Name
