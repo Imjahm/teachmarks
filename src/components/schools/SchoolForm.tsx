@@ -21,12 +21,16 @@ export const SchoolForm = () => {
 
   const createSchool = useMutation({
     mutationFn: async (data: typeof formData) => {
+      if (!session?.user?.id) {
+        throw new Error("User not authenticated")
+      }
+
       const { error } = await supabase
         .from('schools')
         .insert([
           {
             ...data,
-            teacher_id: session?.user?.id,
+            teacher_id: session.user.id,
           }
         ])
       

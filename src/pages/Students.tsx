@@ -19,14 +19,19 @@ const Students = () => {
   const { data: schools, isLoading: isLoadingSchools } = useQuery({
     queryKey: ['schools'],
     queryFn: async () => {
+      if (!session?.user?.id) {
+        throw new Error("User not authenticated")
+      }
+
       const { data, error } = await supabase
         .from('schools')
         .select('*')
-        .eq('teacher_id', session?.user?.id)
+        .eq('teacher_id', session.user.id)
       
       if (error) throw error
       return data || []
     },
+    enabled: !!session?.user?.id,
   })
 
   const { data: students, isLoading: isLoadingStudents } = useQuery({
@@ -71,6 +76,14 @@ const Students = () => {
   })
 
   const isLoading = isLoadingStudents || isLoadingExams || isLoadingSchools
+
+  if (!session) {
+    return (
+      <Card className="p-6 text-center">
+        Please sign in to access this page
+      </Card>
+    )
+  }
 
   return (
     <div className="space-y-8 p-8">
