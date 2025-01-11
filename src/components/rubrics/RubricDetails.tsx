@@ -4,11 +4,13 @@ import { supabase } from "@/integrations/supabase/client"
 import { GradeBoundariesList } from "./GradeBoundaries"
 import { CriteriaList } from "./CriteriaList"
 import { MarkingForm } from "../marking/MarkingForm"
+import { GradeBoundarySuggestions } from "./GradeBoundarySuggestions"
+import { toast } from "sonner"
 
 export function RubricDetails() {
   const { id } = useParams<{ id: string }>()
 
-  const { data: rubric, isLoading } = useQuery({
+  const { data: rubric, isLoading, refetch } = useQuery({
     queryKey: ["rubric", id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -21,6 +23,23 @@ export function RubricDetails() {
       return data
     },
   })
+
+  const handleAcceptSuggestions = async (suggestions: Record<string, number>) => {
+    try {
+      const { error } = await supabase
+        .from("rubrics")
+        .update({ grade_boundaries: suggestions })
+        .eq("id", id)
+
+      if (error) throw error
+      
+      toast.success("Grade boundaries updated successfully")
+      refetch()
+    } catch (error) {
+      console.error("Error updating grade boundaries:", error)
+      toast.error("Failed to update grade boundaries")
+    }
+  }
 
   if (isLoading) {
     return <div>Loading...</div>
@@ -38,6 +57,13 @@ export function RubricDetails() {
         <section>
           <h2 className="text-2xl font-semibold mb-4">Grade Boundaries</h2>
           <GradeBoundariesList boundaries={rubric.grade_boundaries} />
+          <div className="mt-4">
+            <GradeBoundarySuggestions
+              examBoard={rubric.exam_board}
+              subject={rubric.subject}
+              onAcceptSuggestions={handleAcceptSuggestions}
+            />
+          </div>
         </section>
 
         <section>
