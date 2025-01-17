@@ -78,8 +78,12 @@ export const SchoolMap = ({ onLocationSelect, schools = [], onSchoolSelect }: Sc
 
     // Add markers for schools
     schools.forEach(school => {
+      const popup = new mapboxgl.Popup({ offset: 25 })
+        .setHTML(`<h3>${school.name}</h3>`)
+
       const marker = new mapboxgl.Marker()
         .setLngLat([school.longitude, school.latitude])
+        .setPopup(popup)
         .addTo(map.current!)
 
       marker.getElement().addEventListener('click', () => {
