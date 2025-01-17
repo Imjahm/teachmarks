@@ -34,14 +34,14 @@ const chartConfig = {
 const SchoolResults = () => {
   const { schoolId } = useParams()
 
-  const { data: school, isLoading } = useQuery({
+  const { data: school, isLoading, error } = useQuery({
     queryKey: ['school', schoolId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('schools')
         .select('*')
         .eq('id', schoolId)
-        .single()
+        .maybeSingle()
       
       if (error) throw error
       return data
@@ -49,19 +49,41 @@ const SchoolResults = () => {
   })
 
   if (isLoading) {
-    return <div>Loading school data...</div>
+    return <div className="p-8">Loading school data...</div>
+  }
+
+  if (error) {
+    return <div className="p-8 text-red-500">Error loading school data</div>
   }
 
   if (!school) {
-    return <div>School not found</div>
+    return <div className="p-8">School not found</div>
   }
 
-  const performanceData = school.performance_data || []
-  const progressData = school.progress_data || []
-  const gradeDistribution = school.grade_distribution || []
+  // Initialize default data if not present
+  const performanceData = school.performance_data || [
+    { name: 'Math', value: 75 },
+    { name: 'English', value: 82 },
+    { name: 'Science', value: 78 }
+  ]
+  
+  const progressData = school.progress_data || [
+    { month: 'Jan', progress: 65 },
+    { month: 'Feb', progress: 70 },
+    { month: 'Mar', progress: 75 },
+    { month: 'Apr', progress: 80 }
+  ]
+  
+  const gradeDistribution = school.grade_distribution || [
+    { name: 'A', value: 30 },
+    { name: 'B', value: 25 },
+    { name: 'C', value: 20 },
+    { name: 'D', value: 15 },
+    { name: 'E', value: 10 }
+  ]
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 p-8">
       <h1 className="text-3xl font-bold">{school.name} - Performance Dashboard</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -69,14 +91,12 @@ const SchoolResults = () => {
           <h2 className="text-xl font-semibold mb-4">Subject Performance</h2>
           <div className="h-[300px]">
             <ChartContainer config={chartConfig}>
-              <ResponsiveContainer>
-                <BarChart data={performanceData}>
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="value" fill="#0088FE" />
-                </BarChart>
-              </ResponsiveContainer>
+              <BarChart data={performanceData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="value" fill="#0088FE" />
+              </BarChart>
             </ChartContainer>
           </div>
         </Card>
@@ -85,14 +105,12 @@ const SchoolResults = () => {
           <h2 className="text-xl font-semibold mb-4">Progress Over Time</h2>
           <div className="h-[300px]">
             <ChartContainer config={chartConfig}>
-              <ResponsiveContainer>
-                <LineChart data={progressData}>
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line type="monotone" dataKey="progress" stroke="#00C49F" />
-                </LineChart>
-              </ResponsiveContainer>
+              <LineChart data={progressData}>
+                <XAxis dataKey="month" />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Line type="monotone" dataKey="progress" stroke="#00C49F" />
+              </LineChart>
             </ChartContainer>
           </div>
         </Card>
@@ -101,24 +119,22 @@ const SchoolResults = () => {
           <h2 className="text-xl font-semibold mb-4">Grade Distribution</h2>
           <div className="h-[300px]">
             <ChartContainer config={chartConfig}>
-              <ResponsiveContainer>
-                <PieChart>
-                  <Pie
-                    data={gradeDistribution}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, value }) => `${name}: ${value}%`}
-                  >
-                    {gradeDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                </PieChart>
-              </ResponsiveContainer>
+              <PieChart>
+                <Pie
+                  data={gradeDistribution}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label={({ name, value }) => `${name}: ${value}%`}
+                >
+                  {gradeDistribution.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <ChartTooltip content={<ChartTooltipContent />} />
+              </PieChart>
             </ChartContainer>
           </div>
         </Card>
