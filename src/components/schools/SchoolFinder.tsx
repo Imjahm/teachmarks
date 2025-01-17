@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
+import { useNavigate } from "react-router-dom"
 
 export const SchoolFinder = () => {
-  const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
+  const navigate = useNavigate()
 
   const { data: schools = [], isLoading } = useQuery({
     queryKey: ['schools', searchQuery],
@@ -27,6 +28,10 @@ export const SchoolFinder = () => {
       return data || []
     },
   })
+
+  const handleSchoolSelect = (schoolId: string) => {
+    navigate(`/school-results/${schoolId}`)
+  }
 
   const handleLocationSelect = (lat: number, lng: number) => {
     console.log("Selected location:", { lat, lng })
@@ -47,11 +52,15 @@ export const SchoolFinder = () => {
       </Card>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <SchoolMap onLocationSelect={handleLocationSelect} />
+        <SchoolMap 
+          schools={schools}
+          onLocationSelect={handleLocationSelect}
+          onSchoolSelect={handleSchoolSelect}
+        />
         <SchoolList
           schools={schools}
           isLoading={isLoading}
-          onSelect={setSelectedSchoolId}
+          onSelect={handleSchoolSelect}
         />
       </div>
     </div>

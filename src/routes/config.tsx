@@ -75,7 +75,7 @@ export const routes: RouteObject[] = [
     element: withLayout(Students)
   },
   {
-    path: "/school-results",
+    path: "/school-results/:schoolId",
     element: withLayout(SchoolResults)
   }
 ]

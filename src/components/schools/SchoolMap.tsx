@@ -6,17 +6,23 @@ import { useToast } from "@/components/ui/use-toast"
 
 interface SchoolMapProps {
   onLocationSelect: (lat: number, lng: number) => void
+  schools?: Array<{
+    id: string
+    name: string
+    latitude: number
+    longitude: number
+  }>
+  onSchoolSelect?: (schoolId: string) => void
 }
 
-export const SchoolMap = ({ onLocationSelect }: SchoolMapProps) => {
+export const SchoolMap = ({ onLocationSelect, schools = [], onSchoolSelect }: SchoolMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null)
   const map = useRef<mapboxgl.Map | null>(null)
-  const marker = useRef<mapboxgl.Marker | null>(null)
+  const markers = useRef<mapboxgl.Marker[]>([])
   const { toast } = useToast()
   const [mapboxToken, setMapboxToken] = useState("")
 
   useEffect(() => {
-    // Fetch the Mapbox token from Supabase Edge Function secrets
     const fetchMapboxToken = async () => {
       try {
         const response = await fetch("/.netlify/functions/get-mapbox-token")
@@ -44,28 +50,11 @@ export const SchoolMap = ({ onLocationSelect }: SchoolMapProps) => {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/streets-v12",
-        center: [-0.127758, 51.507351], // London coordinates
+        center: [-0.127758, 51.507351],
         zoom: 10,
       })
 
       map.current.addControl(new mapboxgl.NavigationControl(), "top-right")
-
-      marker.current = new mapboxgl.Marker({
-        draggable: true,
-      })
-
-      map.current.on("click", (e) => {
-        const { lng, lat } = e.lngLat
-        marker.current?.setLngLat([lng, lat]).addTo(map.current!)
-        onLocationSelect(lat, lng)
-      })
-
-      marker.current.on("dragend", () => {
-        const lngLat = marker.current?.getLngLat()
-        if (lngLat) {
-          onLocationSelect(lngLat.lat, lngLat.lng)
-        }
-      })
 
       return () => {
         map.current?.remove()
@@ -78,7 +67,28 @@ export const SchoolMap = ({ onLocationSelect }: SchoolMapProps) => {
         variant: "destructive",
       })
     }
-  }, [mapboxToken, onLocationSelect, toast])
+  }, [mapboxToken, toast])
+
+  useEffect(() => {
+    if (!map.current) return
+
+    // Clear existing markers
+    markers.current.forEach(marker => marker.remove())
+    markers.current = []
+
+    // Add markers for schools
+    schools.forEach(school => {
+      const marker = new mapboxgl.Marker()
+        .setLngLat([school.longitude, school.latitude])
+        .addTo(map.current!)
+
+      marker.getElement().addEventListener('click', () => {
+        onSchoolSelect?.(school.id)
+      })
+
+      markers.current.push(marker)
+    })
+  }, [schools, onSchoolSelect])
 
   return (
     <Card className="p-0 overflow-hidden">
