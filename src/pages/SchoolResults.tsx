@@ -7,6 +7,30 @@ import { supabase } from "@/integrations/supabase/client"
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8']
 
+const chartConfig = {
+  performance: {
+    label: "Performance",
+    theme: {
+      light: "#0088FE",
+      dark: "#0088FE"
+    }
+  },
+  progress: {
+    label: "Progress",
+    theme: {
+      light: "#00C49F",
+      dark: "#00C49F"
+    }
+  },
+  grades: {
+    label: "Grades",
+    theme: {
+      light: "#8884d8",
+      dark: "#8884d8"
+    }
+  }
+}
+
 const SchoolResults = () => {
   const { schoolId } = useParams()
 
@@ -44,7 +68,7 @@ const SchoolResults = () => {
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-4">Subject Performance</h2>
           <div className="h-[300px]">
-            <ChartContainer>
+            <ChartContainer config={chartConfig}>
               <ResponsiveContainer>
                 <BarChart data={performanceData}>
                   <XAxis dataKey="name" />
@@ -60,7 +84,7 @@ const SchoolResults = () => {
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-4">Progress Over Time</h2>
           <div className="h-[300px]">
-            <ChartContainer>
+            <ChartContainer config={chartConfig}>
               <ResponsiveContainer>
                 <LineChart data={progressData}>
                   <XAxis dataKey="month" />
@@ -76,7 +100,7 @@ const SchoolResults = () => {
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-4">Grade Distribution</h2>
           <div className="h-[300px]">
-            <ChartContainer>
+            <ChartContainer config={chartConfig}>
               <ResponsiveContainer>
                 <PieChart>
                   <Pie
