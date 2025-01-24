@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useSession } from "@supabase/auth-helpers-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -13,16 +13,27 @@ interface OCRUploadProps {
 
 export const OCRUpload = ({ routePath }: OCRUploadProps) => {
   const [isUploading, setIsUploading] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const session = useSession()
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
-    if (!file || !session?.user) return
+    if (file) {
+      setSelectedFile(file)
+    }
+  }
+
+  const handleUpload = async () => {
+    if (!selectedFile || !session?.user) {
+      toast.error('Please select a file first')
+      return
+    }
 
     setIsUploading(true)
     try {
       const formData = new FormData()
-      formData.append('file', file)
+      formData.append('file', selectedFile)
       formData.append('routePath', routePath)
 
       const { data, error } = await supabase.functions.invoke('process-ocr', {
@@ -32,13 +43,15 @@ export const OCRUpload = ({ routePath }: OCRUploadProps) => {
       if (error) throw error
 
       toast.success('Text extracted successfully')
+      setSelectedFile(null)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
     } catch (error: any) {
       console.error('Error uploading file:', error)
       toast.error(error.message || 'Failed to process image')
     } finally {
       setIsUploading(false)
-      // Reset the input
-      event.target.value = ''
     }
   }
 
@@ -47,12 +60,17 @@ export const OCRUpload = ({ routePath }: OCRUploadProps) => {
       <h2 className="text-xl font-semibold mb-4">Upload Image for OCR</h2>
       <div className="space-y-4">
         <Input
+          ref={fileInputRef}
           type="file"
           accept="image/*"
-          onChange={handleFileUpload}
+          onChange={handleFileSelect}
           disabled={isUploading}
         />
-        <Button disabled={isUploading} className="w-full">
+        <Button 
+          onClick={handleUpload} 
+          disabled={isUploading || !selectedFile}
+          className="w-full"
+        >
           {isUploading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
