@@ -7,7 +7,11 @@ import { toast } from "sonner"
 import { Upload, Loader2 } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 
-export const OCRUpload = ({ routePath }: { routePath: string }) => {
+interface OCRUploadProps {
+  routePath: string
+}
+
+export const OCRUpload = ({ routePath }: OCRUploadProps) => {
   const [isUploading, setIsUploading] = useState(false)
   const session = useSession()
 

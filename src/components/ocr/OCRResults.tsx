@@ -10,7 +10,11 @@ interface OCRResult {
   created_at: string
 }
 
-export const OCRResults = ({ routePath }: { routePath: string }) => {
+interface OCRResultsProps {
+  routePath: string
+}
+
+export const OCRResults = ({ routePath }: OCRResultsProps) => {
   const [results, setResults] = useState<OCRResult[]>([])
   const session = useSession()
 

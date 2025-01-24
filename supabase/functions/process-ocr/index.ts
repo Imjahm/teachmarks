@@ -53,7 +53,7 @@ serve(async (req) => {
 
     // Use OpenAI's GPT-4 Vision to extract text from image
     const response = await openai.createChatCompletion({
-      model: "gpt-4-vision-preview",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "user",
@@ -76,7 +76,8 @@ serve(async (req) => {
         file_path: filePath,
         extracted_text: extractedText,
         status: 'completed',
-        route_path: routePath
+        route_path: routePath,
+        teacher_id: (await supabaseClient.auth.getUser()).data.user?.id
       })
 
     if (dbError) {
