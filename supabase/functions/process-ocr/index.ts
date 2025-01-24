@@ -23,7 +23,7 @@ serve(async (req) => {
     }
 
     // Initialize Supabase client
-    const supabaseClient = createClient(
+    const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
@@ -38,7 +38,7 @@ serve(async (req) => {
     const fileExt = file.name.split('.').pop()
     const filePath = `${crypto.randomUUID()}.${fileExt}`
 
-    const { data: uploadData, error: uploadError } = await supabaseClient.storage
+    const { error: uploadError } = await supabase.storage
       .from('images')
       .upload(filePath, file)
 
@@ -47,7 +47,7 @@ serve(async (req) => {
     }
 
     // Get file URL
-    const { data: { publicUrl } } = supabaseClient.storage
+    const { data: { publicUrl } } = supabase.storage
       .from('images')
       .getPublicUrl(filePath)
 
@@ -62,14 +62,13 @@ serve(async (req) => {
             { type: "image_url", image_url: publicUrl }
           ]
         }
-      ],
-      max_tokens: 500
+      ]
     })
 
     const extractedText = response.data.choices[0]?.message?.content || ''
 
     // Save result to database
-    const { error: dbError } = await supabaseClient
+    const { error: dbError } = await supabase
       .from('ocr_results')
       .insert({
         file_name: file.name,
@@ -77,7 +76,7 @@ serve(async (req) => {
         extracted_text: extractedText,
         status: 'completed',
         route_path: routePath,
-        teacher_id: (await supabaseClient.auth.getUser()).data.user?.id
+        teacher_id: (await supabase.auth.getUser()).data.user?.id
       })
 
     if (dbError) {

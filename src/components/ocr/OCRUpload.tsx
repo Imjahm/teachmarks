@@ -37,6 +37,8 @@ export const OCRUpload = ({ routePath }: OCRUploadProps) => {
       toast.error(error.message || 'Failed to process image')
     } finally {
       setIsUploading(false)
+      // Reset the input
+      event.target.value = ''
     }
   }
 

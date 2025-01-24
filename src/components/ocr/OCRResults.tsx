@@ -37,6 +37,27 @@ export const OCRResults = ({ routePath }: OCRResultsProps) => {
       }
 
       fetchResults()
+
+      // Subscribe to changes
+      const channel = supabase
+        .channel('ocr_results_changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'ocr_results',
+            filter: `teacher_id=eq.${session.user.id}`,
+          },
+          () => {
+            fetchResults()
+          }
+        )
+        .subscribe()
+
+      return () => {
+        supabase.removeChannel(channel)
+      }
     }
   }, [session?.user, routePath])
 
