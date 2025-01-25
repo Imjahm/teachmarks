@@ -1,6 +1,6 @@
 import { RouteObject } from "react-router-dom"
 import Layout from "@/components/Layout"
-import Index from "@/pages/Index"
+import Dashboard from "@/pages/Dashboard"
 import Auth from "@/pages/Auth"
 import Resources from "@/pages/Resources"
 import Upload from "@/pages/Upload"
@@ -28,7 +28,7 @@ export const routes: RouteObject[] = [
   },
   {
     path: "/",
-    element: withLayout(Index)
+    element: withLayout(Dashboard)
   },
   {
     path: "/curriculum",
