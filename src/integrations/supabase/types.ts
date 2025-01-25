@@ -105,6 +105,108 @@ export type Database = {
         }
         Relationships: []
       }
+      student_marks: {
+        Row: {
+          created_at: string
+          id: string
+          marks: number
+          student_id: string
+          subject_id: string
+          teacher_id: string
+          term: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          marks: number
+          student_id: string
+          subject_id: string
+          teacher_id: string
+          term: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          marks?: number
+          student_id?: string
+          subject_id?: string
+          teacher_id?: string
+          term?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_marks_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_marks_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      students: {
+        Row: {
+          age: number
+          class: string
+          created_at: string
+          id: string
+          name: string
+          school_id: string
+          teacher_id: string
+          year: number | null
+        }
+        Insert: {
+          age: number
+          class: string
+          created_at?: string
+          id?: string
+          name: string
+          school_id: string
+          teacher_id: string
+          year?: number | null
+        }
+        Update: {
+          age?: number
+          class?: string
+          created_at?: string
+          id?: string
+          name?: string
+          school_id?: string
+          teacher_id?: string
+          year?: number | null
+        }
+        Relationships: []
+      }
+      subjects: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          teacher_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          teacher_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          teacher_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
