@@ -19,14 +19,9 @@ const Students = () => {
   const { data: schools, isLoading: isLoadingSchools } = useQuery({
     queryKey: ['schools'],
     queryFn: async () => {
-      if (!session?.user?.id) {
-        throw new Error("User not authenticated")
-      }
-
       const { data, error } = await supabase
         .from('schools')
         .select('*')
-        .eq('teacher_id', session.user.id)
       
       if (error) {
         toast({
@@ -38,19 +33,17 @@ const Students = () => {
       }
       return data || []
     },
-    enabled: !!session?.user?.id,
   })
 
   const { data: students, isLoading: isLoadingStudents } = useQuery({
     queryKey: ['students', selectedSchoolId],
     queryFn: async () => {
-      if (!selectedSchoolId || !session?.user?.id) return []
+      if (!selectedSchoolId) return []
       
       const { data, error } = await supabase
         .from('students')
         .select('*')
         .eq('school_id', selectedSchoolId)
-        .eq('teacher_id', session.user.id)
       
       if (error) {
         toast({
@@ -62,29 +55,21 @@ const Students = () => {
       }
       return data || []
     },
-    enabled: !!selectedSchoolId && !!session?.user?.id,
+    enabled: !!selectedSchoolId,
   })
 
   const isLoading = isLoadingStudents || isLoadingSchools
-
-  if (!session) {
-    return (
-      <Card className="p-6 text-center">
-        Please sign in to access this page
-      </Card>
-    )
-  }
 
   return (
     <div className="space-y-8 p-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Schools & Students</h1>
-        {selectedSchoolId && (
+        {session && selectedSchoolId && (
           <Button onClick={() => setShowStudentForm(true)}>Add Student</Button>
         )}
       </div>
       
-      <SchoolForm />
+      {session && <SchoolForm />}
 
       <SchoolList 
         schools={schools || []} 
@@ -92,7 +77,7 @@ const Students = () => {
         onSelect={setSelectedSchoolId}
       />
 
-      {selectedSchoolId && showStudentForm && (
+      {session && selectedSchoolId && showStudentForm && (
         <StudentForm 
           onClose={() => setShowStudentForm(false)}
           selectedSchoolId={selectedSchoolId}
