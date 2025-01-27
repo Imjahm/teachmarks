@@ -24,6 +24,9 @@ import {
 } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
+import { Database } from "@/integrations/supabase/types"
+
+type School = Database['public']['Tables']['schools']['Row']
 
 export const SchoolFinder = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -79,9 +82,9 @@ export const SchoolFinder = () => {
       const { data } = await supabase
         .from('schools')
         .select('school_type')
-        .not('school_type', 'is', null)
-        .distinct()
-      return (data || []).map(d => d.school_type).filter(Boolean)
+        .not('school_type', 'is', null) as { data: { school_type: string }[] }
+      
+      return Array.from(new Set((data || []).map(d => d.school_type))).filter(Boolean)
     },
   })
 
@@ -91,9 +94,9 @@ export const SchoolFinder = () => {
       const { data } = await supabase
         .from('schools')
         .select('district')
-        .not('district', 'is', null)
-        .distinct()
-      return (data || []).map(d => d.district).filter(Boolean)
+        .not('district', 'is', null) as { data: { district: string }[] }
+      
+      return Array.from(new Set((data || []).map(d => d.district))).filter(Boolean)
     },
   })
 
