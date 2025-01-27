@@ -77,31 +77,97 @@ export type Database = {
       }
       schools: {
         Row: {
+          achievements: string | null
           address: string
+          annual_budget: number | null
+          attendance_rate: number | null
+          average_performance: number | null
+          classrooms: number | null
           created_at: string
+          curriculum: string | null
+          district: string | null
+          email: string | null
+          funding_sources: string | null
+          grade_levels: string | null
+          graduation_rate: number | null
+          has_library: boolean | null
+          has_sports_facilities: boolean | null
           id: string
+          labs: number | null
           latitude: number
           longitude: number
           name: string
+          partnerships: string | null
+          phone_number: string | null
+          principal_name: string | null
+          school_type: string | null
+          student_teacher_ratio: number | null
           teacher_id: string
+          total_students: number | null
+          total_teachers: number | null
+          website: string | null
         }
         Insert: {
+          achievements?: string | null
           address: string
+          annual_budget?: number | null
+          attendance_rate?: number | null
+          average_performance?: number | null
+          classrooms?: number | null
           created_at?: string
+          curriculum?: string | null
+          district?: string | null
+          email?: string | null
+          funding_sources?: string | null
+          grade_levels?: string | null
+          graduation_rate?: number | null
+          has_library?: boolean | null
+          has_sports_facilities?: boolean | null
           id?: string
+          labs?: number | null
           latitude: number
           longitude: number
           name: string
+          partnerships?: string | null
+          phone_number?: string | null
+          principal_name?: string | null
+          school_type?: string | null
+          student_teacher_ratio?: number | null
           teacher_id: string
+          total_students?: number | null
+          total_teachers?: number | null
+          website?: string | null
         }
         Update: {
+          achievements?: string | null
           address?: string
+          annual_budget?: number | null
+          attendance_rate?: number | null
+          average_performance?: number | null
+          classrooms?: number | null
           created_at?: string
+          curriculum?: string | null
+          district?: string | null
+          email?: string | null
+          funding_sources?: string | null
+          grade_levels?: string | null
+          graduation_rate?: number | null
+          has_library?: boolean | null
+          has_sports_facilities?: boolean | null
           id?: string
+          labs?: number | null
           latitude?: number
           longitude?: number
           name?: string
+          partnerships?: string | null
+          phone_number?: string | null
+          principal_name?: string | null
+          school_type?: string | null
+          student_teacher_ratio?: number | null
           teacher_id?: string
+          total_students?: number | null
+          total_teachers?: number | null
+          website?: string | null
         }
         Relationships: []
       }
