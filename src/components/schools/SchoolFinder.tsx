@@ -2,29 +2,12 @@ import { useState } from "react"
 import { SchoolMap } from "@/components/schools/SchoolMap"
 import { SchoolList } from "@/components/schools/SchoolList"
 import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Search, Filter } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { useNavigate } from "react-router-dom"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
-import { Slider } from "@/components/ui/slider"
 import { Database } from "@/integrations/supabase/types"
+import { SearchBar } from "./SearchBar"
+import { SchoolFilters } from "./SchoolFilters"
 
 type School = Database['public']['Tables']['schools']['Row']
 
@@ -122,114 +105,14 @@ export const SchoolFinder = () => {
     <div className="space-y-6">
       <Card className="p-4">
         <div className="flex gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search schools by name..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <Filter className="h-4 w-4" />
-                Filters
-              </Button>
-            </SheetTrigger>
-            <SheetContent>
-              <SheetHeader>
-                <SheetTitle>Filter Schools</SheetTitle>
-                <SheetDescription>
-                  Apply filters to find schools that match your criteria
-                </SheetDescription>
-              </SheetHeader>
-              <div className="mt-6 space-y-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">School Type</label>
-                  <Select
-                    value={filters.schoolType}
-                    onValueChange={(value) => setFilters(f => ({ ...f, schoolType: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select school type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">All Types</SelectItem>
-                      {schoolTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">District</label>
-                  <Select
-                    value={filters.district}
-                    onValueChange={(value) => setFilters(f => ({ ...f, district: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select district" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">All Districts</SelectItem>
-                      {districts.map((district) => (
-                        <SelectItem key={district} value={district}>
-                          {district}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Minimum Number of Students: {filters.minStudents}
-                  </label>
-                  <Slider
-                    value={[filters.minStudents]}
-                    onValueChange={([value]) => setFilters(f => ({ ...f, minStudents: value }))}
-                    max={2000}
-                    step={50}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Facilities</label>
-                  <div className="space-y-2">
-                    <Button
-                      variant={filters.hasLibrary === true ? "default" : "outline"}
-                      className="mr-2"
-                      onClick={() => setFilters(f => ({ ...f, hasLibrary: f.hasLibrary === true ? null : true }))}
-                    >
-                      Has Library
-                    </Button>
-                    <Button
-                      variant={filters.hasSportsFacilities === true ? "default" : "outline"}
-                      onClick={() => setFilters(f => ({ 
-                        ...f, 
-                        hasSportsFacilities: f.hasSportsFacilities === true ? null : true 
-                      }))}
-                    >
-                      Has Sports Facilities
-                    </Button>
-                  </div>
-                </div>
-
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={resetFilters}
-                >
-                  Reset Filters
-                </Button>
-              </div>
-            </SheetContent>
-          </Sheet>
+          <SearchBar value={searchQuery} onChange={setSearchQuery} />
+          <SchoolFilters
+            filters={filters}
+            schoolTypes={schoolTypes}
+            districts={districts}
+            onFiltersChange={setFilters}
+            onReset={resetFilters}
+          />
         </div>
       </Card>
 
