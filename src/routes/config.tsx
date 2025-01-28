@@ -8,6 +8,7 @@ import Marking from "@/pages/Marking"
 import SchoolResults from "@/pages/SchoolResults"
 import Students from "@/pages/Students"
 import SchoolProfile from "@/pages/SchoolProfile"
+import Schools from "@/pages/Schools"
 import { RubricUpload } from "@/components/RubricUpload"
 import { RubricsList } from "@/components/rubrics/RubricsList"
 import { RubricDetails } from "@/components/rubrics/RubricDetails"
@@ -74,6 +75,10 @@ export const routes: RouteObject[] = [
   {
     path: "/students",
     element: withLayout(Students)
+  },
+  {
+    path: "/schools",
+    element: withLayout(Schools)
   },
   {
     path: "/school-results/:schoolId",
