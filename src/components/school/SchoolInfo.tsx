@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { format } from "date-fns"
 
 interface SchoolInfoProps {
   name: string
@@ -28,6 +29,13 @@ interface SchoolInfoProps {
   funding_sources?: string
   achievements?: string
   partnerships?: string
+  established_date?: string
+  city?: string
+  state?: string
+  zip_code?: string
+  country?: string
+  affiliation?: string
+  description?: string
 }
 
 export const SchoolInfo = ({ 
@@ -56,12 +64,22 @@ export const SchoolInfo = ({
   annual_budget,
   funding_sources,
   achievements,
-  partnerships
+  partnerships,
+  established_date,
+  city,
+  state,
+  zip_code,
+  country,
+  affiliation,
+  description
 }: SchoolInfoProps) => {
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">{name}</CardTitle>
+        {description && (
+          <p className="text-muted-foreground">{description}</p>
+        )}
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Basic Information */}
@@ -70,16 +88,34 @@ export const SchoolInfo = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="font-medium">Address:</p>
-              <p className="text-muted-foreground">{address}</p>
+              <p className="text-muted-foreground">
+                {address}
+                {city && `, ${city}`}
+                {state && `, ${state}`}
+                {zip_code && ` ${zip_code}`}
+                {country && `, ${country}`}
+              </p>
             </div>
             <div>
               <p className="font-medium">Location:</p>
               <p className="text-muted-foreground">Lat: {latitude}, Long: {longitude}</p>
             </div>
+            {established_date && (
+              <div>
+                <p className="font-medium">Established:</p>
+                <p className="text-muted-foreground">
+                  {format(new Date(established_date), 'MMMM d, yyyy')}
+                </p>
+              </div>
+            )}
+            {affiliation && (
+              <div>
+                <p className="font-medium">Affiliation:</p>
+                <p className="text-muted-foreground">{affiliation}</p>
+              </div>
+            )}
           </div>
         </div>
-
-        <Separator />
 
         {/* Contact Information */}
         <div>
@@ -109,8 +145,6 @@ export const SchoolInfo = ({
           </div>
         </div>
 
-        <Separator />
-
         {/* School Details */}
         <div>
           <h3 className="text-lg font-semibold mb-2">School Details</h3>
@@ -136,8 +170,6 @@ export const SchoolInfo = ({
           </div>
         </div>
 
-        <Separator />
-
         {/* Statistics */}
         <div>
           <h3 className="text-lg font-semibold mb-2">Statistics</h3>
@@ -162,8 +194,6 @@ export const SchoolInfo = ({
             )}
           </div>
         </div>
-
-        <Separator />
 
         {/* Performance Metrics */}
         {(average_performance !== undefined || graduation_rate !== undefined || attendance_rate !== undefined) && (

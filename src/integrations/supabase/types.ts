@@ -79,14 +79,19 @@ export type Database = {
         Row: {
           achievements: string | null
           address: string
+          affiliation: string | null
           annual_budget: number | null
           attendance_rate: number | null
           average_performance: number | null
+          city: string | null
           classrooms: number | null
+          country: string | null
           created_at: string
           curriculum: string | null
+          description: string | null
           district: string | null
           email: string | null
+          established_date: string | null
           funding_sources: string | null
           grade_levels: string | null
           graduation_rate: number | null
@@ -101,23 +106,30 @@ export type Database = {
           phone_number: string | null
           principal_name: string | null
           school_type: string | null
+          state: string | null
           student_teacher_ratio: number | null
           teacher_id: string
           total_students: number | null
           total_teachers: number | null
           website: string | null
+          zip_code: string | null
         }
         Insert: {
           achievements?: string | null
           address: string
+          affiliation?: string | null
           annual_budget?: number | null
           attendance_rate?: number | null
           average_performance?: number | null
+          city?: string | null
           classrooms?: number | null
+          country?: string | null
           created_at?: string
           curriculum?: string | null
+          description?: string | null
           district?: string | null
           email?: string | null
+          established_date?: string | null
           funding_sources?: string | null
           grade_levels?: string | null
           graduation_rate?: number | null
@@ -132,23 +144,30 @@ export type Database = {
           phone_number?: string | null
           principal_name?: string | null
           school_type?: string | null
+          state?: string | null
           student_teacher_ratio?: number | null
           teacher_id: string
           total_students?: number | null
           total_teachers?: number | null
           website?: string | null
+          zip_code?: string | null
         }
         Update: {
           achievements?: string | null
           address?: string
+          affiliation?: string | null
           annual_budget?: number | null
           attendance_rate?: number | null
           average_performance?: number | null
+          city?: string | null
           classrooms?: number | null
+          country?: string | null
           created_at?: string
           curriculum?: string | null
+          description?: string | null
           district?: string | null
           email?: string | null
+          established_date?: string | null
           funding_sources?: string | null
           grade_levels?: string | null
           graduation_rate?: number | null
@@ -163,11 +182,13 @@ export type Database = {
           phone_number?: string | null
           principal_name?: string | null
           school_type?: string | null
+          state?: string | null
           student_teacher_ratio?: number | null
           teacher_id?: string
           total_students?: number | null
           total_teachers?: number | null
           website?: string | null
+          zip_code?: string | null
         }
         Relationships: []
       }

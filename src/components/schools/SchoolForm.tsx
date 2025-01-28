@@ -42,7 +42,14 @@ export const SchoolForm = () => {
     annual_budget: 0,
     funding_sources: "",
     achievements: "",
-    partnerships: ""
+    partnerships: "",
+    established_date: "",
+    city: "",
+    state: "",
+    zip_code: "",
+    country: "",
+    affiliation: "",
+    description: ""
   })
 
   const createSchool = useMutation({
@@ -130,11 +137,63 @@ export const SchoolForm = () => {
               />
             </div>
             <div>
+              <Label>Description</Label>
+              <Textarea
+                value={formData.description}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Brief description of the school"
+              />
+            </div>
+            <div>
               <Label>Address</Label>
               <Input
                 required
                 value={formData.address}
                 onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label>City</Label>
+              <Input
+                value={formData.city}
+                onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label>State</Label>
+              <Input
+                value={formData.state}
+                onChange={(e) => setFormData(prev => ({ ...prev, state: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label>ZIP Code</Label>
+              <Input
+                value={formData.zip_code}
+                onChange={(e) => setFormData(prev => ({ ...prev, zip_code: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label>Country</Label>
+              <Input
+                value={formData.country}
+                onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label>Established Date</Label>
+              <Input
+                type="date"
+                value={formData.established_date}
+                onChange={(e) => setFormData(prev => ({ ...prev, established_date: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label>Affiliation</Label>
+              <Input
+                value={formData.affiliation}
+                onChange={(e) => setFormData(prev => ({ ...prev, affiliation: e.target.value }))}
+                placeholder="e.g., CBSE, ICSE, IB"
               />
             </div>
           </div>
