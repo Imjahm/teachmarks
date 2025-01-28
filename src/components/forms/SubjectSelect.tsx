@@ -23,7 +23,7 @@ export function SubjectSelect({ form, subjects, disabled }: SubjectSelectProps) 
           <FormLabel>Subject</FormLabel>
           <Select 
             onValueChange={field.onChange} 
-            value={field.value}
+            value={field.value || "default"}  // Ensure there's always a value
             disabled={disabled}
           >
             <FormControl>
@@ -32,6 +32,7 @@ export function SubjectSelect({ form, subjects, disabled }: SubjectSelectProps) 
               </SelectTrigger>
             </FormControl>
             <SelectContent>
+              <SelectItem value="default" disabled>Select subject</SelectItem>
               {subjects.map((subject) => (
                 <SelectItem key={subject} value={subject}>
                   {subject}

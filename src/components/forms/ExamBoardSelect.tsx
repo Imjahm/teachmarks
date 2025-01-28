@@ -29,11 +29,13 @@ export function ExamBoardSelect({ form, selectedBoard, onBoardChange }: ExamBoar
             <FormLabel>Exam Board</FormLabel>
             <Select 
               onValueChange={(value) => {
-                field.onChange(value)
-                onBoardChange(value)
-                form.setValue("subject", "")
+                if (value) {  // Ensure value is not empty
+                  field.onChange(value)
+                  onBoardChange(value)
+                  form.setValue("subject", "default")  // Set a default non-empty value
+                }
               }}
-              value={field.value}
+              value={field.value || "default"}  // Ensure there's always a value
             >
               <FormControl>
                 <SelectTrigger>
@@ -41,6 +43,7 @@ export function ExamBoardSelect({ form, selectedBoard, onBoardChange }: ExamBoar
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
+                <SelectItem value="default" disabled>Select exam board</SelectItem>
                 {examBoards.map((board) => (
                   <SelectItem key={board.value} value={board.value}>
                     {board.label}
