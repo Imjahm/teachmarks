@@ -1,8 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts"
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -15,46 +13,28 @@ serve(async (req) => {
 
   try {
     const { content } = await req.json()
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
+    
+    // Return mock processed content
+    const mockProcessedContent = {
+      grade_boundaries: {
+        "A*": 90,
+        "A": 80,
+        "B": 70,
+        "C": 60,
+        "D": 50,
+        "E": 40,
+        "F": 30
       },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an expert at extracting grade boundaries and marking criteria from educational documents. Extract the information and return it in a structured JSON format with grade_boundaries and criteria fields.'
-          },
-          {
-            role: 'user',
-            content: `Extract the grade boundaries and marking criteria from this text: ${content}`
-          }
-        ],
-      }),
-    })
-
-    const data = await response.json()
-    console.log('OpenAI Response:', data)
-
-    const processedContent = {
-      grade_boundaries: {},
-      criteria: []
-    }
-
-    try {
-      const aiResponse = JSON.parse(data.choices[0].message.content)
-      processedContent.grade_boundaries = aiResponse.grade_boundaries || {}
-      processedContent.criteria = aiResponse.criteria || []
-    } catch (error) {
-      console.error('Error parsing AI response:', error)
+      criteria: [
+        "Understanding of key concepts",
+        "Application of knowledge",
+        "Analysis and evaluation",
+        "Communication and presentation"
+      ]
     }
 
     return new Response(
-      JSON.stringify(processedContent),
+      JSON.stringify(mockProcessedContent),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
